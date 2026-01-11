@@ -1,1 +1,237 @@
-<p>task-detail works!</p>
+@if (task(); as t) {
+<!-- Header -->
+<div class="header-section sticky-top bg-white px-3 py-3 border-bottom">
+  <div class="d-flex align-items-center gap-3">
+    <button class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center" (click)="goBack()"
+      style="width: 40px; height: 40px; background-color: #f3f4f6;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+    </button>
+    <div>
+      <h5 class="m-0 text-size-lg font-weight-bold">Task Details</h5>
+      <div class="text-muted text-size-sm">{{ t.vehicleNumber }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Scrollable Content -->
+<div class="content-section p-3 d-flex flex-column gap-3" style="padding-bottom: 90px !important;">
+
+  @if (viewState === 'DETAILS') {
+  <!-- Task Type & Advance Card -->
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="border rounded-4 p-3 m-1" style="border-color: #16a34a !important; border-width: 2px !important;">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="d-flex gap-3 align-items-center">
+          <div class="rounded-3 d-flex align-items-center justify-content-center p-2"
+            style="width: 40px; height: 40px; background-color: #ecfdf5; color: #16a34a;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <div>
+            <div class="text-muted text-size-xs">Task Type</div>
+            <div class="font-weight-bold text-dark">{{ t.type }}</div>
+          </div>
+        </div>
+        <span class="badge rounded-pill px-3 py-2 text-dark font-weight-normal d-flex align-items-center gap-1"
+          style="background-color: #fff3cd; color: #856404;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          {{ t.status }}
+        </span>
+      </div>
+
+      <div class="rounded-3 p-3 d-flex justify-content-between align-items-center" style="background-color: #f8f9fa;">
+        <div class="d-flex align-items-center gap-2 text-muted">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            style="color: #16a34a;">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+          Advance Amount
+        </div>
+        <div class="text-size-xl font-weight-bold" style="color: #16a34a;">{{ t.advanceAmount |
+          currency:'INR':'symbol':'1.0-0' }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trip Information -->
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">Trip Information</div>
+
+    <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
+      <div class="d-flex align-items-center gap-3 text-muted">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #16a34a;">
+          <rect x="1" y="3" width="15" height="13"></rect>
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+          <circle cx="5.5" cy="18.5" r="2.5"></circle>
+          <circle cx="18.5" cy="18.5" r="2.5"></circle>
+        </svg>
+        <span class="text-size-sm">Vehicle Number</span>
+      </div>
+      <div class="font-weight-bold text-dark text-size-sm">{{ t.vehicleNumber }}</div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-light">
+      <div class="d-flex align-items-center gap-3 text-muted">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #16a34a;">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span class="text-size-sm">Supervisor</span>
+      </div>
+      <div class="font-weight-bold text-dark text-size-sm">{{ t.supervisor }}</div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center py-2 pt-3">
+      <div class="d-flex align-items-center gap-3 text-muted">
+        <span class="text-size-sm ps-1">Task Date</span>
+      </div>
+      <div class="font-weight-bold text-dark text-size-sm">{{ t.date | date:'d MMMM y' }}</div>
+    </div>
+  </div>
+
+  <!-- Delivery Summary -->
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">Delivery Summary</div>
+
+    <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
+      <div class="d-flex align-items-center gap-3 text-muted">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #16a34a;">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span class="text-size-sm">Total Customers</span>
+      </div>
+      <div class="font-weight-bold text-dark text-size-sm">{{ t.totalCustomers }}</div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center py-2 pt-3">
+      <div class="d-flex align-items-center gap-3 text-muted">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #16a34a;">
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+          </path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <span class="text-size-sm">Total Boxes</span>
+      </div>
+      <div class="font-weight-bold text-size-sm" style="color: #16a34a;">21</div>
+    </div>
+  </div>
+
+  <!-- Supporting Team -->
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">Supporting Team</div>
+    <div class="d-flex align-items-center gap-3">
+      <div class="avatar rounded-circle d-flex align-items-center justify-content-center text-muted"
+        style="width: 48px; height: 48px; background-color: #f3f4f6;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
+      <div>
+        <div class="font-weight-bold text-dark text-size-sm">{{ t.helper?.name }}</div>
+        <div class="text-muted text-size-xs">{{ t.helper?.role }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Remarks -->
+  @if (t.remarks) {
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">Remarks</div>
+    <div class="text-dark text-size-sm">{{ t.remarks }}</div>
+  </div>
+  }
+
+  } @else if (viewState === 'START_KM') {
+  <!-- Header -->
+  <div class="card border-0 shadow-sm rounded-4 p-4 border border-2 border-primary-light">
+    <div class="d-flex gap-3 align-items-center mb-4">
+      <div class="icon-box rounded-circle d-flex align-items-center justify-content-center p-3"
+        style="background-color: #e6fcf5; color: #0ca678; width: 48px; height: 48px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="font-weight-bold text-dark text-size-md">Odometer Reading</div>
+        <div class="text-muted text-size-xs">Vehicle: {{ t.vehicleNumber }}</div>
+      </div>
+    </div>
+
+    <div class="form-group mb-4">
+      <div class="input-group input-group-lg border rounded-3 overflow-hidden">
+        <input type="tel" class="form-control border-0 text-center font-weight-bold" placeholder="Enter starting KM"
+          [formControl]="odometerControl" style="font-size: 1.25rem;">
+        <span class="input-group-text bg-white border-0 text-muted">KM</span>
+      </div>
+    </div>
+
+    <div class="alert alert-warning border-0 rounded-4 d-flex gap-3 align-items-start p-3" role="alert"
+      style="background-color: #fff3cd; color: #856404;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <div>
+        <div class="font-weight-bold text-size-xs mb-1">Important</div>
+        <div class="text-size-xs" style="line-height: 1.4;">This reading can only be entered once. Please
+          verify the
+          odometer reading before confirming.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center text-muted text-size-xs px-4">
+    Check your vehicle's odometer and enter the current reading accurately.
+  </div>
+  }
+
+</div>
+
+<!-- Footer Action -->
+<div class="footer-section fixed-bottom bg-white border-top p-3" style="z-index: 1000;">
+  @if (viewState === 'DETAILS') {
+  <button class="btn btn-primary w-100 rounded-4 py-3 font-weight-bold text-size-md"
+    style="background-color: #16a34a; border: none;" (click)="onAcceptTask()">Accept Task</button>
+  } @else {
+  <button class="btn btn-primary w-100 rounded-4 py-3 font-weight-bold text-size-md"
+    style="background-color: #9cd4c2; border: none; color: white;"
+    [style.background-color]="odometerControl.valid ? '#16a34a' : '#9cd4c2'" [disabled]="odometerControl.invalid"
+    (click)="confirmStartKm()">
+    Confirm Starting KM
+  </button>
+  }
+</div>
+} @else {
+<div class="d-flex flex-column align-items-center justify-content-center h-100 p-4">
+  <div class="text-muted">Task not found</div>
+  <button class="btn btn-primary mt-3" (click)="goBack()">Go Back</button>
+</div>
+}

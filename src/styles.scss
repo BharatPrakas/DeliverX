@@ -2,6 +2,7 @@ body{
     margin: 0;
     padding: 0;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--background-color);
 }
 
 :root{
@@ -9,7 +10,8 @@ body{
     --primary-light-color: #bbf7d0;
     --secondary-color: #2563eb;
     --text-color: #2563eb;
-    --background-color: #fff;
+    --background-color: #f9fafb;
+    --card-background-color: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,10 +19,13 @@ body{
         --primary-color: #16a34a;
         --secondary-color: #2563eb;
         --text-color: #2563eb;
-        --background-color: #000;
+        --background-color: #f9fafb;
+        --card-background-color: #fff;
     }
 }
-
+.primary-text-color{
+    color: var(--primary-color);
+}
 .text-size-xs{
     font-size: 12px;
 }

@@ -1,1 +1,124 @@
-<p>delivery-list works!</p>
+<!-- Header -->
+<div class="header-section sticky-top bg-white px-3 py-3 border-bottom">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center"
+        (click)="goBack()" style="width: 40px; height: 40px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
+      <div>
+        <h5 class="m-0 text-size-lg font-weight-bold">Deliveries</h5>
+        <div class="text-muted text-size-sm">{{ stats().completed }} of {{ stats().total }} completed</div>
+      </div>
+    </div>
+    <div class="text-muted text-size-xs">
+      Progress <span class="font-weight-bold" style="color: #0ca678;">{{ stats().progress }}%</span>
+    </div>
+  </div>
+
+  <div class="progress rounded-pill" style="height: 6px; background-color: #f3f4f6;">
+    <div class="progress-bar rounded-pill" role="progressbar" [style.width.%]="stats().progress"
+      style="background-color: #0ca678;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+</div>
+
+<!-- Scrollable Content -->
+<div class="content-section p-3 d-flex flex-column gap-3" style="padding-bottom: 90px !important;">
+
+  @for (item of items(); track item.id) {
+  <div class="card border-0 shadow-sm rounded-4 p-3">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+      <div class="d-flex gap-3 align-items-center">
+        <div class="avatar rounded-circle d-flex align-items-center justify-content-center font-weight-bold"
+          style="width: 40px; height: 40px;"
+          [style.background-color]="item.status === 'Delivered' ? '#e6fcf5' : '#e0f2fe'"
+          [style.color]="item.status === 'Delivered' ? '#0ca678' : '#0ea5e9'">
+          @if (item.status === 'Delivered') {
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          } @else {
+          {{ item.id }}
+          }
+        </div>
+        <div>
+          <div class="font-weight-bold text-dark text-size-md">{{ item.name }}</div>
+          @if(item.tagline){
+          <div class="text-muted text-size-xs">{{ item.tagline }}</div>
+          }
+        </div>
+      </div>
+
+      @if (item.status === 'Delivered') {
+      <span class="badge rounded-pill px-2 py-1 font-weight-normal d-flex align-items-center gap-1"
+        style="background-color: #e6fcf5; color: #0ca678;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        Delivered
+      </span>
+      } @else {
+      <span class="badge rounded-pill px-2 py-1 font-weight-normal d-flex align-items-center gap-1"
+        style="background-color: #fff3cd; color: #856404;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        Pending
+      </span>
+      }
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2 text-muted">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+          </path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <span class="text-size-sm">{{ item.boxes }} boxes</span>
+      </div>
+
+      @if (item.status === 'Delivered') {
+      <div class="font-weight-bold text-size-md" style="color: #0ca678;">{{ item.amount |
+        currency:'INR':'symbol':'1.0-0' }}</div>
+      } @else {
+      <button class="btn btn-sm rounded-pill px-3 py-2 text-white font-weight-bold d-flex align-items-center gap-1"
+        style="background-color: #f97316; border: none;" (click)="onDeliver(item.id)">
+        Deliver
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+      }
+    </div>
+  </div>
+  }
+
+</div>
+
+<!-- Footer Action -->
+<div class="footer-section fixed-bottom bg-white border-top p-3" style="z-index: 1000;">
+  @if (stats().progress === 100) {
+  <button class="btn btn-primary w-100 rounded-4 py-3 font-weight-bold text-size-md"
+    style="background-color: #16a34a; border: none; color: white;" (click)="proceedNext()">
+    Proceed to Expense
+  </button>
+  } @else {
+  <button class="btn btn-outline-primary w-100 rounded-4 py-3 font-weight-bold text-size-md"
+    style="border: 2px solid #0ca678; color: #0ca678; background: transparent;" (click)="proceedNext()">
+    Skip to Expenses ({{ stats().total - stats().completed }} pending)
+  </button>
+  }
+</div>

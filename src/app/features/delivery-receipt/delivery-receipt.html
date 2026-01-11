@@ -1,1 +1,163 @@
-<p>delivery-receipt works!</p>
+<!-- Header -->
+<div class="header-section sticky-top bg-white px-3 py-3 border-bottom">
+  <div class="d-flex align-items-center gap-3">
+    <button class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center" (click)="goBack()"
+      style="width: 40px; height: 40px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+    </button>
+    <div>
+      <h5 class="m-0 text-size-lg font-weight-bold">Delivery Receipt</h5>
+      <div class="text-muted text-size-sm">{{ delivery()?.name }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Scrollable Content -->
+<form [formGroup]="form" class="content-section p-3 d-flex flex-column gap-3" style="padding-bottom: 90px !important;">
+
+  <!-- Weight Entries -->
+  <div class="card border-0 shadow-sm rounded-4 p-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <span class="text-muted text-size-xs font-weight-bold text-uppercase">WEIGHT ENTRIES</span>
+      <button type="button" class="btn btn-sm rounded-pill px-3 py-1 font-weight-bold d-flex align-items-center gap-1"
+        style="background-color: #e6fcf5; color: #0ca678; border: none;" (click)="addRow()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add Row
+      </button>
+    </div>
+
+    <div class="d-flex mb-2 text-muted text-size-xs text-center">
+      <div style="width: 30px;">S.No</div>
+      <div class="flex-fill">Cages</div>
+      <div class="flex-fill">Load Wt</div>
+      <div class="flex-fill">Empty Wt</div>
+      <div style="width: 30px;"></div>
+    </div>
+
+    <!-- Rows -->
+    <div formArrayName="entries" class="d-flex flex-column gap-2 mb-3">
+      @for (entry of entries.controls; track $index) {
+      <div [formGroupName]="$index" class="d-flex align-items-center gap-2">
+        <div class="text-muted text-size-sm text-center font-weight-bold" style="width: 30px;">{{ $index + 1 }}</div>
+        <input type="number" formControlName="cages" class="form-control text-center rounded-3 p-2 font-weight-bold"
+          style="border: 1px solid #e5e7eb;">
+        <input type="number" formControlName="loadWt" class="form-control text-center rounded-3 p-2 font-weight-bold"
+          style="border: 1px solid #e5e7eb;">
+        <input type="number" formControlName="emptyWt" class="form-control text-center rounded-3 p-2 font-weight-bold"
+          style="border: 1px solid #e5e7eb;">
+        <button type="button" class="btn btn-link p-0 text-danger" style="width: 30px;" (click)="deleteRow($index)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+      </div>
+      }
+    </div>
+
+    <hr class="border-top border-dashed my-3">
+
+    <!-- Totals -->
+    <div class="d-flex mb-3 text-center align-items-center gap-2 font-weight-bold" style="color: #0ca678;">
+      <div class="text-dark text-start" style="width: 30px;">Tot</div>
+      <div class="flex-fill">{{ stats().totalCages }}</div>
+      <div class="flex-fill">{{ stats().totalLoadWt | number:'1.1-1' }}</div>
+      <div class="flex-fill">{{ stats().totalEmptyWt | number:'1.1-1' }}</div>
+      <div style="width: 30px;"></div>
+    </div>
+
+    <!-- Birds Weight -->
+    <div class="rounded-3 p-3 d-flex justify-content-between align-items-center" style="background-color: #f7f9f8;">
+      <div class="d-flex align-items-center gap-2 text-muted font-weight-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+        Birds Weight
+      </div>
+      <div class="font-weight-bold text-size-lg" style="color: #0ca678;">{{ stats().birdsWeight | number:'1.2-2' }} kg
+      </div>
+    </div>
+  </div>
+
+  <!-- Quantity -->
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">QUANTITY</div>
+    <div class="mb-3 d-flex align-items-center gap-2 text-muted">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9l6 6 6-6" />
+      </svg>
+      Number of Birds
+    </div>
+    <input type="number" formControlName="numberOfBirds"
+      class="form-control form-control-lg rounded-3 p-3 text-dark font-weight-bold" style="border: 1px solid #e5e7eb;">
+  </div>
+
+  <!-- Billing -->
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">BILLING</div>
+    <div class="d-flex align-items-center gap-2 text-muted mb-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      Rate per kg (₹)
+    </div>
+    <input type="number" formControlName="ratePerKg"
+      class="form-control form-control-lg rounded-3 p-3 text-dark font-weight-bold mb-3"
+      style="border: 1px solid #e5e7eb;">
+
+    <div class="rounded-3 p-3 d-flex justify-content-between align-items-center" style="background-color: #fff7ed;">
+      <div class="text-muted font-weight-medium">Billing Amount</div>
+      <div class="font-weight-bold text-size-xl" style="color: #ea580c;">{{ stats().billingAmount | currency:'INR' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment -->
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">PAYMENT</div>
+    <div class="d-flex align-items-center gap-2 text-muted mb-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+        <line x1="1" y1="10" x2="23" y2="10"></line>
+      </svg>
+      Cash Received (₹)
+    </div>
+    <input type="number" formControlName="cashReceived"
+      class="form-control form-control-lg rounded-3 p-3 text-dark font-weight-bold mb-3"
+      style="border: 1px solid #e5e7eb;">
+
+    <div class="rounded-3 p-3 d-flex justify-content-between align-items-center" style="background-color: #fef2f2;">
+      <div class="text-muted font-weight-medium">Balance</div>
+      <div class="font-weight-bold text-size-xl" style="color: #dc2626;">{{ stats().balance | currency:'INR' }}</div>
+    </div>
+  </div>
+
+</form>
+
+<!-- Footer Action -->
+<div class="footer-section fixed-bottom bg-white border-top p-3" style="z-index: 1000;">
+  <button
+    class="btn btn-primary w-100 rounded-4 py-3 font-weight-bold text-size-md d-flex align-items-center justify-content-center gap-2"
+    style="background-color: #16a34a; border: none; color: white;" (click)="confirmDelivery()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    Confirm Delivery
+  </button>
+</div>

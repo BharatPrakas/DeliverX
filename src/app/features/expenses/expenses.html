@@ -1,1 +1,271 @@
-<p>expenses works!</p>
+<!-- Header -->
+<div class="header-section sticky-top bg-white px-3 py-3 border-bottom">
+  <div class="d-flex align-items-center gap-3">
+    <button class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center" (click)="goBack()"
+      style="width: 40px; height: 40px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+    </button>
+    <div>
+      <h5 class="m-0 text-size-lg font-weight-bold">Expenses</h5>
+      <div class="text-muted text-size-sm">Track your trip expenses</div>
+    </div>
+  </div>
+</div>
+
+<!-- Scrollable Content -->
+<div class="content-section p-3 d-flex flex-column gap-3" style="padding-bottom: 90px !important;">
+
+  <!-- Advance Summary Card -->
+  <div class="card border-0 shadow-sm rounded-4 p-3 border border-2" style="border-color: #16a34a !important;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <div class="text-muted text-size-xs">Advance Received</div>
+        <div class="font-weight-bold text-size-xl" style="color: #16a34a;">{{ advanceReceived() |
+          currency:'INR':'symbol':'1.0-0' }}</div>
+      </div>
+      <div class="text-end">
+        <div class="text-muted text-size-xs">Total Spent</div>
+        <div class="font-weight-bold text-size-xl" style="color: #ea580c;">{{ totalSpent() |
+          currency:'INR':'symbol':'1.0-0' }}</div>
+      </div>
+    </div>
+
+    <div class="rounded-3 p-3 d-flex justify-content-between align-items-center" style="background-color: #f3f4f6;">
+      <div class="text-muted font-weight-medium">Remaining</div>
+      <div class="font-weight-bold text-size-lg" style="color: #16a34a;">{{ remaining() |
+        currency:'INR':'symbol':'1.0-0' }}</div>
+    </div>
+  </div>
+
+  <!-- Add Expense Grid -->
+  <div>
+    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">ADD EXPENSE</div>
+    <div class="row g-2">
+      <!-- Diesel -->
+      <div class="col-4">
+        <div
+          class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-column align-items-center justify-content-center gap-2 h-100"
+          (click)="openAddExpense(categories[0])">
+          <div class="rounded-circle d-flex align-items-center justify-content-center p-2"
+            style="width: 40px; height: 40px; background-color: #fff7ed; color: #ea580c;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 22v-8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8"></path>
+              <path d="M5 22V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v15"></path>
+              <path d="M12 7V4a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"></path>
+            </svg>
+          </div>
+          <div class="text-size-xs font-weight-bold text-dark">Diesel</div>
+        </div>
+      </div>
+      <!-- Food -->
+      <div class="col-4">
+        <div
+          class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-column align-items-center justify-content-center gap-2 h-100"
+          (click)="openAddExpense(categories[1])">
+          <div class="rounded-circle d-flex align-items-center justify-content-center p-2"
+            style="width: 40px; height: 40px; background-color: #fff7ed; color: #ea580c;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+              <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+              <line x1="6" y1="1" x2="6" y2="4"></line>
+              <line x1="10" y1="1" x2="10" y2="4"></line>
+              <line x1="14" y1="1" x2="14" y2="4"></line>
+            </svg>
+          </div>
+          <div class="text-size-xs font-weight-bold text-dark">Food</div>
+        </div>
+      </div>
+      <!-- Toll -->
+      <div class="col-4">
+        <div
+          class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-column align-items-center justify-content-center gap-2 h-100"
+          (click)="openAddExpense(categories[2])">
+          <div class="rounded-circle d-flex align-items-center justify-content-center p-2"
+            style="width: 40px; height: 40px; background-color: #eff6ff; color: #2563eb;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+          </div>
+          <div class="text-size-xs font-weight-bold text-dark">Toll</div>
+        </div>
+      </div>
+      <!-- Labour -->
+      <div class="col-4">
+        <div
+          class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-column align-items-center justify-content-center gap-2 h-100"
+          (click)="openAddExpense(categories[3])">
+          <div class="rounded-circle d-flex align-items-center justify-content-center p-2"
+            style="width: 40px; height: 40px; background-color: #f0fdf4; color: #16a34a;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <div class="text-size-xs font-weight-bold text-dark">Labour</div>
+        </div>
+      </div>
+      <!-- Other -->
+      <div class="col-4">
+        <div
+          class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-column align-items-center justify-content-center gap-2 h-100"
+          (click)="openAddExpense(categories[4])">
+          <div class="rounded-circle d-flex align-items-center justify-content-center p-2"
+            style="width: 40px; height: 40px; background-color: #f3f4f6; color: #4b5563;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1v22"></path>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="text-size-xs font-weight-bold text-dark">Other</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expense Log -->
+  <div>
+    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">EXPENSE LOG</div>
+
+    @if (expensesList().length === 0) {
+    <div
+      class="card border-0 shadow-sm rounded-4 p-5 d-flex flex-column align-items-center justify-content-center bg-white">
+      <div class="d-flex align-items-center justify-content-center mb-3" style="color: #6c757d;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1v22"></path>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+      </div>
+      <div class="text-muted text-size-sm">No expenses recorded yet</div>
+      <div class="text-muted text-size-xs">Tap above to add expenses</div>
+    </div>
+    } @else {
+    <div class="d-flex flex-column gap-2">
+      @for (expense of expensesList(); track expense.id) {
+      <div class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-row align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+          <div class="rounded-circle d-flex align-items-center justify-content-center p-2"
+            style="width: 40px; height: 40px;"
+            [style.background-color]="expense.category === 'diesel' ? '#fff7ed' : (expense.category === 'toll' ? '#eff6ff' : (expense.category === 'labour' ? '#f0fdf4' : '#f3f4f6'))"
+            [style.color]="expense.category === 'diesel' ? '#ea580c' : (expense.category === 'toll' ? '#2563eb' : (expense.category === 'labour' ? '#16a34a' : '#4b5563'))">
+            @if(expense.category === 'diesel') { <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M3 22v-8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8"></path>
+              <path d="M5 22V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v15"></path>
+              <path d="M12 7V4a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"></path>
+            </svg> }
+            @else if(expense.category === 'food') { <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+              <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+              <line x1="6" y1="1" x2="6" y2="4"></line>
+              <line x1="10" y1="1" x2="10" y2="4"></line>
+              <line x1="14" y1="1" x2="14" y2="4"></line>
+            </svg> }
+            @else if(expense.category === 'toll') { <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg> }
+            @else if(expense.category === 'labour') { <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg> }
+            @else { <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1v22"></path>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg> }
+          </div>
+          <div>
+            <div class="font-weight-bold text-dark text-size-sm">{{ expense.title }}</div>
+            <div class="text-muted text-size-xs">{{ expense.time | date:'h:mm a' }}</div>
+          </div>
+        </div>
+        <div class="font-weight-bold text-size-md text-danger">-{{ expense.amount | currency:'INR':'symbol':'1.0-0' }}
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+
+</div>
+
+<!-- Footer Action -->
+<div class="footer-section fixed-bottom bg-white border-top p-3" style="z-index: 1000;">
+  <button
+    class="btn btn-primary w-100 rounded-4 py-3 font-weight-bold text-size-md d-flex align-items-center justify-content-center gap-2"
+    style="background-color: #16a34a; border: none; color: white;" (click)="completeTrip()">
+    Complete Trip
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </button>
+</div>
+
+<!-- Modal -->
+@if (isModalOpen()) {
+<div class="modal-overlay position-fixed top-0 start-0 w-100 h-100 d-flex align-items-end"
+  style="background: rgba(0,0,0,0.5); z-index: 2000;">
+  <div class="bg-white w-100 rounded-top-4 p-4 animation-slide-up">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex align-items-center gap-2">
+        <div class="rounded-circle d-flex align-items-center justify-content-center p-2"
+          style="width: 32px; height: 32px; background-color: #e6fcf5; color: #16a34a;">
+          <!-- Use dynamic icon based on selection or generic edit icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+        </div>
+        <h5 class="m-0 font-weight-bold">Add {{ selectedCategory()?.name }}</h5>
+      </div>
+      <button class="btn btn-link p-0 text-dark" (click)="closeModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <form [formGroup]="form">
+      <div class="mb-3">
+        <label class="form-label text-muted text-size-sm">Amount (₹)</label>
+        <input type="number" formControlName="amount"
+          class="form-control form-control-lg rounded-3 p-3 font-weight-bold" placeholder="Enter amount">
+      </div>
+      <div class="mb-4">
+        <label class="form-label text-muted text-size-sm">Description (optional)</label>
+        <input type="text" formControlName="description" class="form-control rounded-3 p-3"
+          placeholder="e.g., Diesel at...">
+      </div>
+
+      <button class="btn btn-primary w-100 rounded-4 py-3 font-weight-bold text-size-md"
+        style="background-color: #9cd4c2; border: none;" [style.background-color]="form.valid ? '#16a34a' : '#9cd4c2'"
+        [disabled]="form.invalid" (click)="saveExpense()">
+        + Add Expense
+      </button>
+    </form>
+  </div>
+</div>
+}

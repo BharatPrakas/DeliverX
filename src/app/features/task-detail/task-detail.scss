@@ -1,0 +1,19 @@
+:host {
+    display: block;
+    // Ensure height allows sticky elements to work if wrapped
+    min-height: 100vh;
+    background-color: var(--background-color);
+}
+
+.border-primary-light {
+    border-color: var(--primary-light-color) !important;
+}
+
+// Adjust sticky if needed, but sticky-top/fixed-bottom usually work on window scroll
+// If the app uses a scrollable container instead of body scroll, sticky might need 'top: 0' within that container.
+// Assuming body scroll for now as per standard mobile web app without specific layout logic seen.
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+}

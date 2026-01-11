@@ -1,1 +1,231 @@
-<p>trip-summary works!</p>
+<!-- Header -->
+<div class="header-section sticky-top bg-white px-3 py-3 border-bottom">
+  <div class="d-flex align-items-center gap-3">
+    <button class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center" (click)="goBack()"
+      style="width: 40px; height: 40px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6" />
+      </svg>
+    </button>
+    <div>
+      <h5 class="m-0 text-size-lg font-weight-bold">Trip Summary</h5>
+      <div class="text-muted text-size-sm">Review and complete your trip</div>
+    </div>
+  </div>
+</div>
+
+<!-- Scrollable Content -->
+<div class="content-section p-3 d-flex flex-column gap-3" style="padding-bottom: 90px !important;">
+
+  <!-- Ending KM Card -->
+  <div class="card border shadow-sm rounded-4 p-3 border-2" style="border-color: #16a34a !important;">
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <div class="rounded-circle d-flex align-items-center justify-content-center p-2"
+        style="width: 48px; height: 48px; background-color: #e6fcf5; color: #16a34a;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <!-- Assuming speedometer or similar icon, shielding placeholder used effectively -->
+      </div>
+      <div>
+        <div class="font-weight-bold text-size-md">Ending KM</div>
+        <div class="text-muted text-size-xs">Enter odometer reading</div>
+      </div>
+    </div>
+
+    <!-- Custom Input Field -->
+    <div class="input-group mb-4 p-1 rounded-3 border" style="background-color: #fff;">
+      <input type="number" [formControl]="endingKmControl"
+        class="form-control border-0 shadow-none text-center font-weight-bold text-size-xl"
+        placeholder="Enter ending KM" style="height: 50px; background: transparent;">
+      <span class="input-group-text border-0 bg-transparent text-muted font-weight-medium">KM</span>
+    </div>
+
+    @if (endingKmControl.invalid && endingKmControl.touched) {
+    <div class="text-danger text-center text-size-sm mb-3">Ending KM must be > {{ startingKm() }}</div>
+    }
+
+    <!-- Stats Row -->
+    <div class="d-flex gap-3">
+      <div class="flex-fill rounded-3 p-3 text-center" style="background-color: #f3f4f6;">
+        <div class="text-muted text-size-xs mb-1">Starting</div>
+        <div class="font-weight-bold text-size-lg text-dark">{{ startingKm() }}</div>
+      </div>
+      <div class="flex-fill rounded-3 p-3 text-center" style="background-color: #ecfdf5;">
+        <div class="text-size-xs font-weight-medium" style="color: #059669;">Total Distance</div>
+        <div class="font-weight-bold text-size-lg" style="color: #059669;">
+          @if(totalDistance() !== null) { {{ totalDistance() }} } @else { - }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delivery Summary -->
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-4 text-uppercase tracking-wide">DELIVERY SUMMARY</div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center gap-3 text-muted">
+        <div class="icon-box-sm rounded-circle bg-light d-flex align-items-center justify-content-center"
+          style="width:32px; height:32px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <span>Total Customers</span>
+      </div>
+      <div class="font-weight-bold text-dark">{{ deliveryStats().total }}</div>
+    </div>
+
+    <hr class="border-top bg-light my-2 opacity-50">
+
+    <div class="d-flex justify-content-between align-items-center mb-3 mt-3">
+      <div class="d-flex align-items-center gap-3 text-muted">
+        <div class="icon-box-sm rounded-circle bg-light d-flex align-items-center justify-content-center"
+          style="width:32px; height:32px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <span>Delivered</span>
+      </div>
+      <div class="font-weight-bold text-dark">{{ deliveryStats().completed }} / {{ deliveryStats().total }}</div>
+    </div>
+
+    <hr class="border-top bg-light my-2 opacity-50">
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div class="d-flex align-items-center gap-3 text-muted">
+        <div class="icon-box-sm rounded-circle d-flex align-items-center justify-content-center"
+          style="width:32px; height:32px; background-color: #ecfdf5; color: #16a34a;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <span style="color: #16a34a;">Total Billed</span>
+      </div>
+      <div class="font-weight-bold text-size-lg" style="color: #16a34a;">{{ totalBilled() |
+        currency:'INR':'symbol':'1.0-0' }}</div>
+    </div>
+  </div>
+
+  <!-- Cash Summary -->
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-4 text-uppercase tracking-wide">CASH SUMMARY</div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="text-muted">Advance Received</div>
+      <div class="font-weight-bold text-dark text-size-lg">{{ advanceReceived() | currency:'INR':'symbol':'1.0-0' }}
+      </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="text-muted">Total Expenses</div>
+      <div class="font-weight-bold text-dark">-{{ totalExpenses() | currency:'INR':'symbol':'1.0-0' }}</div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="text-muted">Cash from Customers</div>
+      <div class="font-weight-bold text-dark">{{ cashFromCustomers() | currency:'INR':'symbol':'1.0-0' }}</div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+      <div class="text-muted">Outstanding Balance</div>
+      <div class="font-weight-bold text-dark">{{ outstandingBalance() | currency:'INR':'symbol':'1.0-0' }}</div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center pt-1">
+      <div class="font-weight-bold text-dark text-size-md">Cash in Hand</div>
+      <div class="font-weight-bold text-size-xl" style="color: #16a34a;">{{ cashInHand() |
+        currency:'INR':'symbol':'1.0-0' }}</div>
+    </div>
+  </div>
+
+  <!-- Expense Breakdown -->
+  @if(expenseBreakdown().size > 0) {
+  <div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="text-muted text-size-xs font-weight-bold mb-4 text-uppercase tracking-wide">EXPENSE BREAKDOWN</div>
+    @for (entry of expenseBreakdown().entries(); track entry[0]) {
+    <div class="d-flex justify-content-between align-items-center mb-3 last:mb-0">
+      <div class="text-capitalize text-dark font-weight-medium">{{ entry[0] }}</div>
+      <div class="font-weight-bold text-dark">{{ entry[1] | currency:'INR':'symbol':'1.0-0' }}</div>
+    </div>
+    }
+  </div>
+  }
+  @if(expenseBreakdown().size === 0) {
+  <div class="text-muted text-center text-size-sm">No expenses recorded</div>
+  }
+
+</div>
+
+<!-- Footer Action -->
+<div class="footer-section fixed-bottom bg-white border-top p-3" style="z-index: 1000;">
+  <button
+    class="btn btn-primary w-100 rounded-4 py-3 font-weight-bold text-size-md d-flex align-items-center justify-content-center gap-2"
+    style="background-color: #86efac; border: none; color: #14532d;"
+    [style.background-color]="endingKmControl.valid ? '#16a34a' : '#86efac'"
+    [style.color]="endingKmControl.valid ? 'white' : '#14532d'" (click)="completeTrip()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    Complete Trip
+  </button>
+</div>
+
+<!-- Modal -->
+@if (showConfirmation()) {
+<div
+  class="modal-overlay position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-4 fade-in"
+  style="background: rgba(0,0,0,0.5); z-index: 2000;">
+  <div class="bg-white w-100 rounded-4 p-4 animation-scale-up">
+    <div class="d-flex flex-column align-items-center text-center mb-4">
+      <div class="rounded-circle d-flex align-items-center justify-content-center mb-3"
+        style="width: 48px; height: 48px; background-color: #fff7ed; color: #ea580c;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h5 class="font-weight-bold mb-2">Confirm Trip Completion</h5>
+      <div class="text-muted text-size-sm">Are you sure you want to complete this trip? This action cannot be undone.
+      </div>
+    </div>
+
+    <div class="rounded-3 p-3 mb-4" style="background-color: #f9fafb;">
+      <div class="d-flex justify-content-between mb-2">
+        <span class="text-muted text-size-sm">Total Distance</span>
+        <span class="font-weight-bold">{{ totalDistance() }} km</span>
+      </div>
+      <div class="d-flex justify-content-between mb-2">
+        <span class="text-muted text-size-sm">Deliveries Completed</span>
+        <span class="font-weight-bold">{{ deliveryStats().completed }}/{{ deliveryStats().total }}</span>
+      </div>
+      <div class="d-flex justify-content-between">
+        <span class="text-muted text-size-sm">Cash in Hand</span>
+        <span class="font-weight-bold">{{ cashInHand() | currency:'INR':'symbol':'1.0-0' }}</span>
+      </div>
+    </div>
+
+    <div class="d-flex gap-3">
+      <button class="btn btn-outline-secondary flex-fill rounded-3 py-2 font-weight-bold"
+        style="border-color: #e5e7eb; color: #374151;" (click)="cancelCompletion()">
+        Cancel
+      </button>
+      <button class="btn btn-primary flex-fill rounded-3 py-2 font-weight-bold"
+        style="background-color: #16a34a; border: none;" (click)="confirmCompletion()">
+        Confirm
+      </button>
+    </div>
+  </div>
+</div>
+}

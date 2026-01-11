@@ -1,31 +1,46 @@
-.profile {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #ccc;
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: var(--background-color);
 }
-.logout {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #ccc;
+
+.dashboard-header {
+    background-color: #15803d; /* brand-green-700 */
 }
-.pannel-background{
-    background-color: var(--primary-color);
+
+.tracking-wide {
+    letter-spacing: 0.05em;
 }
-.pannel-background-light{
-    background-color: #22c55e;
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.pannel-background-outline{
-    border: 1px solid var(--primary-color);
+
+.card:active {
+    transform: scale(0.98);
 }
-.slider{
-    width: 100%;
-    gap: 1rem;
+
+.text-size-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.bg-white-opacity-10 {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.border-white-opacity-10 {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Scrollbar hiding for slider if needed, though mostly using vertical scroll now */
+.slider {
     display: flex;
-    overflow-x: scroll;
-    white-space: nowrap;
-    &::-webkit-scrollbar {
-        height: 0;
-    }
+    overflow-x: auto;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none; /* Firefox */
+}
+.slider::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
 }
