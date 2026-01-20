@@ -51,79 +51,82 @@
   <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase tracking-wide">ACTIVE TASK</div>
 
   @if (activeTask() && activeTask().length > 0; as task) {
-  @for (task of activeTask(); track $index) {
-  <div class="card border border-2 shadow-sm rounded-4 p-3 mb-4 card-start" (click)="viewTask(task.id)"
-    style="cursor: pointer; border-color: #16a34a !important;">
-    <div class="d-flex justify-content-between align-items-start mb-3">
-      <div class="d-flex gap-3">
-        <div class="rounded-3 p-2 d-flex align-items-center justify-content-center"
-          style="width: 48px; height: 48px; background-color: #e6fcf5; color: #16a34a;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="1" y="3" width="15" height="13"></rect>
-            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-            <circle cx="5.5" cy="18.5" r="2.5"></circle>
-            <circle cx="18.5" cy="18.5" r="2.5"></circle>
-          </svg>
+  <div class="slider">
+    @for (task of activeTask(); track $index) {
+    <div [ngStyle]="activeTask().length > 1 ? { minWidth: '90%' } : {minWidth: '100%'}"
+      class="card border border-2 shadow-sm rounded-4 p-3 mb-4 card-start" (click)="viewTask(task.tripId)"
+      style="cursor: pointer; border-color: #16a34a !important;">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div class="d-flex gap-3">
+          <div class="rounded-3 p-2 d-flex align-items-center justify-content-center"
+            style="width: 48px; height: 48px; background-color: #e6fcf5; color: #16a34a;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13"></rect>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+          </div>
+          <div>
+            <div class="font-weight-bold text-size-md text-dark">{{ task.vehicleNumber }}</div>
+            <div class="text-muted text-size-sm">{{ task.date | date:'d MMM y' }}</div>
+          </div>
         </div>
-        <div>
-          <div class="font-weight-bold text-size-md text-dark">{{ task.vehicleNumber }}</div>
-          <div class="text-muted text-size-sm">{{ task.date | date:'d MMM y' }}</div>
+        <span class="badge rounded-pill text-size-xs py-2 px-3 border"
+          style="background-color: #fff7ed; color: #d97706; border-color: #fed7aa; font-weight: 500;">
+          <div class="d-flex align-items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            {{ task.status }}
+          </div>
+        </span>
+      </div>
+
+      <div class="d-flex gap-3 mb-3">
+        <div class="flex-fill rounded-3 p-3" style="background-color: #f3f4f6;">
+          <div class="d-flex align-items-center gap-2 text-muted text-size-xs mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            Deliveries
+          </div>
+          <div class="font-weight-bold text-dark text-size-lg">{{ task.totalCustomers }}</div>
+        </div>
+        <div class="flex-fill rounded-3 p-3" style="background-color: #f3f4f6;">
+          <div class="d-flex align-items-center gap-2 text-muted text-size-xs mb-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            Advance
+          </div>
+          <div class="font-weight-bold text-dark text-size-lg">{{ task.advanceAmount | currency:'INR':'symbol':'1.0-0'
+            }}</div>
         </div>
       </div>
-      <span class="badge rounded-pill text-size-xs py-2 px-3 border"
-        style="background-color: #fff7ed; color: #d97706; border-color: #fed7aa; font-weight: 500;">
-        <div class="d-flex align-items-center gap-1">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+
+      <div class="border-top pt-3">
+        <div class="d-flex justify-content-between align-items-center" style="color: #16a34a;">
+          <span class="font-weight-bold text-size-sm">View Details</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
+            <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
-          {{ task.status }}
         </div>
-      </span>
+      </div>
     </div>
-  
-    <div class="d-flex gap-3 mb-3">
-      <div class="flex-fill rounded-3 p-3" style="background-color: #f3f4f6;">
-        <div class="d-flex align-items-center gap-2 text-muted text-size-xs mb-1">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-            </path>
-            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-          </svg>
-          Deliveries
-        </div>
-        <div class="font-weight-bold text-dark text-size-lg">{{ task.totalCustomers }}</div>
-      </div>
-      <div class="flex-fill rounded-3 p-3" style="background-color: #f3f4f6;">
-        <div class="d-flex align-items-center gap-2 text-muted text-size-xs mb-1">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="1" x2="12" y2="23"></line>
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-          </svg>
-          Advance
-        </div>
-        <div class="font-weight-bold text-dark text-size-lg">{{ task.advanceAmount | currency:'INR':'symbol':'1.0-0'
-          }}</div>
-      </div>
-    </div>
-  
-    <div class="border-top pt-3">
-      <div class="d-flex justify-content-between align-items-center" style="color: #16a34a;">
-        <span class="font-weight-bold text-size-sm">View Details</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </div>
-    </div>
+    }
   </div>
-  }
   } @else {
   <div
     class="card border border-2 shadow-sm rounded-4 p-5 mb-4 d-flex flex-column align-items-center justify-content-center text-center">

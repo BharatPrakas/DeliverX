@@ -15,7 +15,7 @@ export const routes: Routes = [
         component: Dashboard
     },
     {
-        path: 'task-detail/:id',
+        path: 'task-detail/:tripId',
         component: TaskDetail
     },
     {

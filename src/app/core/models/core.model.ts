@@ -6,6 +6,7 @@ export interface ApiResponse<T> {
 
 export interface Task {
   id: number;
+  tripId: number;
   vehicleNumber: string;
   date: Date;
   status: 'Pending' | 'In Progress' | 'Completed';
@@ -17,6 +18,24 @@ export interface Task {
   helper?: { name: string, role: string };
   startingKm?: number;
   endingKm?: number;
+}
+export interface TaskDetails {
+  id: number;
+  tripId: number;
+  tripCode: string;
+  date: string;
+  vehicleNumber: string;
+  tripStatus: string;
+  advanceAmount: string;
+  status: string;
+  totalCustomers: number;
+  supervisor: string;
+  totalBoxes: number;
+  remarks: string;
+  helpers: {
+    name: string,
+    role: string
+  }[]
 }
 
 export interface User {

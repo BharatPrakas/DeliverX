@@ -1,10 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpRoutingService } from '../../common/services/http-routing';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '../models/core.model';
+import { ApiResponse, TaskDetails } from '../models/core.model';
 
 export interface Task {
   id: number;
+  tripId: number;
   vehicleNumber: string;
   date: Date;
   status: 'Pending' | 'In Progress' | 'Completed';
@@ -30,6 +31,7 @@ export class TripService {
   // Mock Active Task
   private _activeTask = signal<Task | null>({
     id: 1,
+    tripId: 1,
     vehicleNumber: 'TN 30 BT 1616',
     date: new Date('2025-01-07'),
     status: 'Pending',
@@ -63,5 +65,13 @@ export class TripService {
 
   getMyWorklist(): Observable<ApiResponse<Task[]>> {
     return this.http.get('v1/getMyWorklist') as Observable<ApiResponse<Task[]>>;
+  }
+
+  getTaskDetails(tripId: number): Observable<ApiResponse<TaskDetails>> {
+    return this.http.get(`v1/getTaskDetails`, { tripId }) as Observable<ApiResponse<TaskDetails>>;
+  }
+
+  acceptTask(data: { tripId: number }): Observable<ApiResponse<null>> {
+    return this.http.post(`v1/acceptTask`, data) as Observable<ApiResponse<null>>;
   }
 }
