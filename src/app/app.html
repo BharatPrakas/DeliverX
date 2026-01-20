@@ -1,2 +1,8 @@
 <router-outlet></router-outlet>
-<!-- <app-loader></app-loader> -->
+@if (commonLoader()) {
+  @defer {
+    <app-loader></app-loader>
+  } @loading {
+    <div class="skeleton-loader"></div>
+  }
+}

@@ -1,4 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { HttpRoutingService } from '../../common/services/http-routing';
+import { Observable } from 'rxjs';
+import { ApiResponse } from '../models/core.model';
 
 export interface Task {
   id: number;
@@ -20,6 +23,7 @@ export interface Task {
   providedIn: 'root',
 })
 export class TripService {
+  private http = inject(HttpRoutingService);
   private _startingKm = signal<number>(0);
   readonly startingKm = this._startingKm.asReadonly();
 
@@ -55,5 +59,9 @@ export class TripService {
       this._activeTask.set(null); // Clear active task
       this._startingKm.set(0);
     }
+  }
+
+  getMyWorklist(): Observable<ApiResponse<Task[]>> {
+    return this.http.get('v1/getMyWorklist') as Observable<ApiResponse<Task[]>>;
   }
 }
