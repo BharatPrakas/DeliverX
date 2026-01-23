@@ -21,7 +21,7 @@ export class DeliveryReceipt implements OnInit {
   form = this.fb.group({
     entries: this.fb.array([]),
     numberOfBirds: [0],
-    ratePerKg: [12, Validators.required],
+    ratePerKg: [0, Validators.required],
     cashReceived: [0]
   });
 
@@ -132,9 +132,9 @@ export class DeliveryReceipt implements OnInit {
         cashReceived: this.form.value.cashReceived || 0,
         balance: stats.balance
       };
-
-      this.deliveryService.updateDelivery(this.delivery()!.id, receiptData);
-      this.router.navigate(['/delivery-list']);
+      console.log(receiptData);
+      // this.deliveryService.updateDelivery(this.delivery()!.id, receiptData);
+      // this.router.navigate(['/delivery-list']);
     }
   }
 }

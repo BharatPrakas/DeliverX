@@ -1,7 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { DeliveryService } from '../../core/services/delivery';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { ApiResponse, DeliveryItem } from '../../core/models/core.model';
+import { TripService } from '../../core/services/trip';
+import { CommonService } from '../../common/services/common-service';
 
 @Component({
   selector: 'app-delivery-list',
@@ -10,21 +13,46 @@ import { DeliveryService } from '../../core/services/delivery';
   styleUrl: './delivery-list.scss',
 })
 export class DeliveryList {
-  private deliveryService = inject(DeliveryService);
+  private tripService = inject(TripService);
+  private commonService = inject(CommonService);
   private router = inject(Router);
+  private tripId = inject(ActivatedRoute).snapshot.params['tripId'];
+  private destroy$ = new Subject<void>();
+  items = signal<DeliveryItem[]>([]);
+  stats = computed(() => {
+    const total = this.items().length;
+    const completed = this.items().filter(item => item.isDelivered).length;
+    const progress = total > 0 ? (completed / total) * 100 : 0;
+    return { total, completed, progress };
+  });
 
-  items = this.deliveryService.items;
-  stats = this.deliveryService.stats;
+  ngOnInit() {
+    this.commonService.showLoader();
+    this.tripService.getDeliveryList(this.tripId).subscribe({
+      next: (res: ApiResponse<DeliveryItem[]>) => {
+        this.items.set(res.data);
+        this.commonService.hideLoader();
+      },
+      error: (err) => {
+        this.commonService.hideLoader();
+      }
+    });
+  }
 
   goBack() {
     window.history.back();
   }
 
   onDeliver(id: number) {
-    this.router.navigate(['/delivery-receipt'], { queryParams: { id } });
+    this.router.navigate(['/delivery-receipt', this.tripId], { queryParams: { id } });
   }
 
   proceedNext() {
-    this.router.navigate(['/expenses']);
+    this.router.navigate(['/expenses', this.tripId]);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

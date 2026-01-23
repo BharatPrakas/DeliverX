@@ -45,3 +45,14 @@ export interface User {
   role: string;
   token: string;
 }
+
+export interface DeliveryItem {
+  id: number;
+  customerName: string;
+  requestedBoxes: number;
+  isDelivered: boolean;
+  remarks: string;
+  collectedAmount: number;
+  isCashCollected: boolean;
+  status: string
+}

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-purchase',
@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
   styleUrl: './purchase.scss',
 })
 export class Purchase {
+  private tripId = inject(ActivatedRoute).snapshot.params['tripId'];
   private router = inject(Router);
 
   purchaseData = {
@@ -32,12 +33,16 @@ export class Purchase {
     ]
   };
 
+  ngOnInit() {
+    console.log(this.tripId);
+  }
+
   goBack() {
     window.history.back();
   }
 
   markAsPurchased() {
     console.log('Marked as purchased');
-    this.router.navigate(['/delivery-list']);
+    this.router.navigate(['/delivery-list', this.tripId]);
   }
 }

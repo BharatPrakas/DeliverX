@@ -19,23 +19,23 @@ export const routes: Routes = [
         component: TaskDetail
     },
     {
-        path: 'purchase',
+        path: 'purchase/:tripId',
         component: Purchase
     },
     {
-        path: 'delivery-list',
+        path: 'delivery-list/:tripId',
         component: DeliveryList
     },
     {
-        path: 'delivery-receipt',
+        path: 'delivery-receipt/:tripId',
         component: DeliveryReceipt
     },
     {
-        path: 'expenses',
+        path: 'expenses/:tripId',
         loadComponent: () => import('./features/expenses/expenses').then(m => m.Expenses)
     },
     {
-        path: 'trip-summary',
+        path: 'trip-summary/:tripId',
         loadComponent: () => import('./features/trip-summary/trip-summary').then(m => m.TripSummary)
     }
 ];

@@ -39,7 +39,7 @@ export class Dashboard {
     this.commonService.showLoader();
     this.tripService.getMyWorklist().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: ApiResponse<Task[]>) => {
-        this.activeTask.set(data.data);
+        this.activeTask.set(data.data); 
       },
       error: (error: HttpErrorResponse) => {
         console.log(error);

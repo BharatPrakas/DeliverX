@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpRoutingService } from '../../common/services/http-routing';
 import { Observable } from 'rxjs';
-import { ApiResponse, TaskDetails } from '../models/core.model';
+import { ApiResponse, TaskDetails,DeliveryItem } from '../models/core.model';
 
 export interface Task {
   id: number;
@@ -48,7 +48,7 @@ export class TripService {
   private _history = signal<Task[]>([]);
   readonly history = this._history.asReadonly();
 
-  startTrip(km: number) {
+  startTrips(km: number) {
     this._startingKm.set(km);
     this._activeTask.update(task => task ? { ...task, status: 'In Progress', startingKm: km } : null);
   }
@@ -73,5 +73,13 @@ export class TripService {
 
   acceptTask(data: { tripId: number }): Observable<ApiResponse<null>> {
     return this.http.post(`v1/acceptTask`, data) as Observable<ApiResponse<null>>;
+  }
+
+  updateStartingKms(data: { tripId: number, startingKm: number }): Observable<ApiResponse<null>> {
+    return this.http.post(`v1/updateStartingKms`, data) as Observable<ApiResponse<null>>;
+  }
+
+  getDeliveryList(tripId: number): Observable<ApiResponse<DeliveryItem[]>> {
+    return this.http.post(`v1/getDeliveryList`, { tripId }) as Observable<ApiResponse<DeliveryItem[]>>;
   }
 }

@@ -28,7 +28,7 @@
 <!-- Scrollable Content -->
 <div class="content-section p-3 d-flex flex-column gap-3" style="padding-bottom: 90px !important;">
 
-  @for (item of items(); track item.id) {
+  @for (item of items(); track $index in items()) {
   <div class="card border-0 shadow-sm rounded-4 p-3">
     <div class="d-flex justify-content-between align-items-start mb-3">
       <div class="d-flex gap-3 align-items-center">
@@ -42,13 +42,13 @@
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
           } @else {
-          {{ item.id }}
+          {{ $index + 1 }}
           }
         </div>
         <div>
-          <div class="font-weight-bold text-dark text-size-md">{{ item.name }}</div>
-          @if(item.tagline){
-          <div class="text-muted text-size-xs">{{ item.tagline }}</div>
+          <div class="font-weight-bold text-dark text-size-md">{{ item.customerName }}</div>
+          @if(item.remarks){
+          <div class="text-muted text-size-xs">{{ item.remarks }}</div>
           }
         </div>
       </div>
@@ -86,11 +86,11 @@
           <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
-        <span class="text-size-sm">{{ item.boxes }} boxes</span>
+        <span class="text-size-sm">{{ item.requestedBoxes }} boxes</span>
       </div>
 
       @if (item.status === 'Delivered') {
-      <div class="font-weight-bold text-size-md" style="color: #0ca678;">{{ item.amount |
+      <div class="font-weight-bold text-size-md" style="color: #0ca678;">{{ item.collectedAmount|
         currency:'INR':'symbol':'1.0-0' }}</div>
       } @else {
       <button class="btn btn-sm rounded-pill px-3 py-2 text-white font-weight-bold d-flex align-items-center gap-1"

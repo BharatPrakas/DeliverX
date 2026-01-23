@@ -7,6 +7,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../common/services/auth';
 import { CommonService } from '../../common/services/common-service';
 import { ApiResponse, TaskDetails } from '../../core/models/core.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-task-detail',
@@ -53,12 +54,19 @@ export class TaskDetail {
     });
   }
 
-  confirmStartKm() {
-    if (this.odometerControl.valid) {
-      console.log('Confirmed KM:', this.odometerControl.value);
-      this.tripService.startTrip(Number(this.odometerControl.value));
-      this.router.navigate(['/purchase']);
-    }
+  startTrip() {
+    this.commonService.showLoader();
+    this.tripService.updateStartingKms({ tripId: this.task()?.id!, startingKm: Number(this.odometerControl.value) }).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: ApiResponse<null>) => {
+        this.router.navigate(['/purchase', this.task()?.id]);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.log(error);
+      },
+      complete: () => {
+        this.commonService.hideLoader();
+      }
+    });
   }
 
   ngOnInit() {
