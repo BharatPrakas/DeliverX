@@ -1,10 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DeliveryService } from '../../core/services/delivery';
 import { ExpenseService } from '../../core/services/expense';
 import { TripService } from '../../core/services/trip';
+import { Subject, takeUntil } from 'rxjs';
+import { ApiResponse, TripSummary } from '../../core/models/core.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { CommonService } from '../../common/services/common-service';
 
 @Component({
   selector: 'app-trip-summary',
@@ -12,14 +16,17 @@ import { TripService } from '../../core/services/trip';
   templateUrl: './trip-summary.html',
   styleUrl: './trip-summary.scss',
 })
-export class TripSummary {
+export class TripSummaryComponent {
   private router = inject(Router);
   private deliveryService = inject(DeliveryService);
   private expenseService = inject(ExpenseService);
   private tripService = inject(TripService);
-
-  startingKm = this.tripService.startingKm;
-
+  private commonService = inject(CommonService);
+  startingKm = signal<number>(0);
+  /** 
+   * Subject for managing unsubscriptions and avoiding memory leaks.
+   */
+  private destroy$ = new Subject<void>();
   // Use a computed validator or setup control after viewing startingKm? 
   // Simple approach: Validator checks against current signal value or re-creates validator.
   // We'll update validators when control changes or just use a custom validator.
@@ -41,6 +48,8 @@ export class TripSummary {
     });
   }
 
+  private tripId = inject(ActivatedRoute).snapshot.params['tripId'];
+  tripSummary = signal<TripSummary | null>(null);
   totalDistance = computed(() => {
     const end = this.endingKm();
     const start = this.startingKm();
@@ -50,16 +59,13 @@ export class TripSummary {
     return null;
   });
 
-  // Delivery Stats
-  deliveryStats = this.deliveryService.stats;
-
-  // Computations for Financials
+  // // Computations for Financials
   totalBilled = computed(() => {
-    return this.deliveryService.items().reduce((sum, item) => sum + (item.receiptData?.billingAmount || 0), 0);
+    return this.tripSummary()?.totalBillingAmount || 0;
   });
 
   cashFromCustomers = computed(() => {
-    return this.deliveryService.items().reduce((sum, item) => sum + (item.receiptData?.cashReceived || 0), 0);
+    return this.tripSummary()?.totalCashCollected || 0;
   });
 
   outstandingBalance = computed(() => {
@@ -67,9 +73,20 @@ export class TripSummary {
   });
 
   // Expense Stats
-  advanceReceived = this.expenseService.advanceReceivedSignal;
-  totalExpenses = this.expenseService.totalSpent;
-  expenseBreakdown = this.expenseService.breakdown;
+  advanceReceived = computed(() => {
+    return this.tripSummary()?.advanceAmount || 0;
+  });
+  totalExpenses = computed(() => {
+    return this.tripSummary()?.expenses.reduce((acc, curr) => acc + curr.amount, 0) || 0;
+  });
+  expenseBreakdown = computed(() => {
+    const map = new Map<string, number>();
+    this.tripSummary()?.expenses.forEach(e => {
+      const current = map.get(e.category.toLowerCase()) || 0;
+      map.set(e.category.toLowerCase(), current + e.amount);
+    });
+    return map;
+  });
 
   // Final Cash in Hand
   cashInHand = computed(() => {
@@ -96,13 +113,35 @@ export class TripSummary {
   }
 
   confirmCompletion() {
-    // Here we would typically save the trip data to the backend
-    console.log('Trip Completed!');
     if (this.endingKm()) {
-      this.tripService.completeTrip(this.endingKm()!);
-      this.expenseService.reset();
-      this.deliveryService.reset(); // Assuming we add this method
+      this.commonService.showLoader();
+      this.tripService.completeTrip({ tripId: this.tripId, endingKm: this.endingKm()! }).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.commonService.hideLoader();
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.commonService.hideLoader();
+          console.error(err);
+        }
+      });
     }
-    this.router.navigate(['/dashboard']);
+  }
+
+  ngOnInit() {
+    this.tripService.getTripSummary(this.tripId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: ApiResponse<TripSummary>) => {
+        this.tripSummary.set(res.data);
+        this.startingKm.set(res.data.startingKm);
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error(err);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

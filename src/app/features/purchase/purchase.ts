@@ -1,6 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TripService } from '../../core/services/trip';
+import { Subject, takeUntil } from 'rxjs';
+import { ApiResponse } from '../../core/models/core.model';
+import { CommonService } from '../../common/services/common-service';
 
 @Component({
   selector: 'app-purchase',
@@ -11,7 +15,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class Purchase {
   private tripId = inject(ActivatedRoute).snapshot.params['tripId'];
   private router = inject(Router);
-
+  private tripService = inject(TripService);
+  private commonService = inject(CommonService);
+  /** 
+   * Subject for managing unsubscriptions and avoiding memory leaks.
+   */
+  private destroy$ = new Subject<void>();
   purchaseData = {
     supplier: {
       name: 'Sree Broilers',
@@ -42,7 +51,22 @@ export class Purchase {
   }
 
   markAsPurchased() {
-    console.log('Marked as purchased');
-    this.router.navigate(['/delivery-list', this.tripId]);
+    this.commonService.showLoader();
+    this.tripService.markAsPurchased({ tripId: Number(this.tripId) }).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: ApiResponse<null>) => {
+        this.router.navigate(['/delivery-list', this.tripId]);
+      },
+      error: (error) => {
+        console.log(error);
+      },
+      complete: () => {
+        this.commonService.hideLoader();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

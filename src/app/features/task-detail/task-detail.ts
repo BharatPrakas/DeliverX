@@ -2,9 +2,8 @@ import { Component, inject, computed, WritableSignal, signal } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Task, TripService } from '../../core/services/trip';
+import { TripService } from '../../core/services/trip';
 import { Subject, takeUntil } from 'rxjs';
-import { AuthService } from '../../common/services/auth';
 import { CommonService } from '../../common/services/common-service';
 import { ApiResponse, TaskDetails } from '../../core/models/core.model';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -40,6 +39,10 @@ export class TaskDetail {
   }
 
   onAcceptTask() {
+    if (this.task()?.tripStatus === 'ACCEPTED') {
+      this.viewState = 'START_KM';
+      return;
+    }
     this.commonService.showLoader();
     this.tripService.acceptTask({ tripId: this.task()?.id! }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: ApiResponse<null>) => {
@@ -81,6 +84,9 @@ export class TaskDetail {
     this.tripService.getTaskDetails(Number(tripId)).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: ApiResponse<TaskDetails>) => {
         this.task.set(res.data);
+        if (res.data.tripStatus === 'ACCEPTED') {
+          this.viewState = 'START_KM';
+        }
       },
       error: (error) => {
         console.log(error);

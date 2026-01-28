@@ -194,7 +194,7 @@
             </svg> }
           </div>
           <div>
-            <div class="font-weight-bold text-dark text-size-sm">{{ expense.title }}</div>
+            <div class="font-weight-bold text-dark text-size-sm">{{ expense.description }}</div>
             <div class="text-muted text-size-xs">{{ expense.time | date:'h:mm a' }}</div>
           </div>
         </div>
@@ -224,7 +224,7 @@
 <!-- Modal -->
 @if (isModalOpen()) {
 <div class="modal-overlay position-fixed top-0 start-0 w-100 h-100 d-flex align-items-end"
-  style="background: rgba(0,0,0,0.5); z-index: 2000;">
+  style="background: rgba(0,0,0,0.5); z-index: 1000;">
   <div class="bg-white w-100 rounded-top-4 p-4 animation-slide-up">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="d-flex align-items-center gap-2">

@@ -16,4 +16,7 @@ export class CommonService {
   hideLoader() {
     this.commonLoader.set(false);
   }
+  setLoader(value: boolean) {
+    this.commonLoader.set(value);
+  }
 }

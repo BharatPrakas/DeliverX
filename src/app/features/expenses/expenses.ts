@@ -1,18 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExpenseService } from '../../core/services/expense';
+import { Subject, takeUntil } from 'rxjs';
+import { TripService } from '../../core/services/trip';
+import { ApiResponse, Expense, tripExpense } from '../../core/models/core.model';
+import { CommonService } from '../../common/services/common-service';
 
-interface Expense {
-  id: number;
-  category: string;
-  icon: string; // SVG path or name
-  title: string;
-  description?: string;
-  time: Date;
-  amount: number;
-}
 
 interface ExpenseCategory {
   id: string;
@@ -31,9 +26,15 @@ interface ExpenseCategory {
 export class Expenses {
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private expenseService = inject(ExpenseService);
+  private TripService = inject(TripService);
+  private commonService = inject(CommonService);
+  private tripId = inject(ActivatedRoute).snapshot.params['tripId'];
+  /** 
+   * Subject for managing unsubscriptions and avoiding memory leaks.
+   */
+  private destroy$ = new Subject<void>();
 
-  advanceReceived = this.expenseService.advanceReceivedSignal;
+  advanceReceived = signal(0);
 
   categories: ExpenseCategory[] = [
     { id: 'diesel', name: 'Diesel', icon: '', color: '#ea580c', bgColor: '#fff7ed' },
@@ -44,11 +45,15 @@ export class Expenses {
   ];
 
   // List of expenses
-  expensesList = this.expenseService.list;
+  expensesList = signal<Expense[]>([]);
 
-  totalSpent = this.expenseService.totalSpent;
+  totalSpent = computed(() => {
+    return this.expensesList().reduce((acc, curr) => acc + curr.amount, 0);
+  });
 
-  remaining = this.expenseService.remaining;
+  remaining = computed(() => {
+    return this.advanceReceived() - this.totalSpent();
+  });
 
   // Modal State
   isModalOpen = signal(false);
@@ -72,26 +77,62 @@ export class Expenses {
 
   saveExpense() {
     if (this.form.valid && this.selectedCategory()) {
-      const newExpense = {
-        id: Date.now(),
+      this.commonService.showLoader();
+      const newExpense: Expense = {
         category: this.selectedCategory()!.id,
-        title: this.form.value.description || this.selectedCategory()!.name,
+        description: this.form.value.description || this.selectedCategory()!.name,
         time: new Date(),
         amount: Number(this.form.value.amount)
       };
-
-      this.expenseService.addExpense(newExpense);
-      this.closeModal();
+      this.TripService.createTripExpense({ tripId: this.tripId, expense: newExpense }).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: ApiResponse<Expense>) => {
+          if (res.success) {
+            this.expensesList.update(list => [res.data!, ...list]);
+            this.closeModal();
+            this.commonService.hideLoader();
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          this.commonService.hideLoader();
+        }
+      });
     }
   }
 
   completeTrip() {
-    // Navigate to Trip Summary or similar
-    console.log('Trip Completed');
-    this.router.navigate(['/trip-summary']);
+    this.router.navigate(['/trip-summary', this.tripId]);
   }
 
   goBack() {
     window.history.back();
+  }
+
+  ngOnInit() {
+    this.getTripExpenses();
+  }
+
+  getTripExpenses() {
+    this.commonService.showLoader();
+    this.TripService.getTripExpenses(this.tripId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: ApiResponse<tripExpense>) => {
+        if (res.data) {
+          this.advanceReceived.set(res.data.advanceAmount);
+          this.expensesList.set(res.data.expenses);
+          this.commonService.hideLoader();
+          // this.expenseService.expenses.set(res.data.expenses);
+          // this.expenseService.advanceAmount.set(res.data.advanceAmount);
+        }
+      },
+      error: (error) => {
+        console.log(error);
+        this.commonService.hideLoader();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

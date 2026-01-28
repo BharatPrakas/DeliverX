@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { DeliveryItem } from '../models/core.model';
 
 export interface WeightEntry {
   cages: number;
@@ -16,30 +17,12 @@ export interface DeliveryReceiptData {
   balance: number;
 }
 
-export interface DeliveryItem {
-  id: number;
-  name: string;
-  tagline: string;
-  boxes: number;
-  status: 'Pending' | 'Delivered';
-  amount?: number; // Estimated or final amount
-  receiptData?: DeliveryReceiptData;
-}
-
 @Injectable({
   providedIn: 'root',
 })
 export class DeliveryService {
 
-  // Mock data
-  private deliveries = signal<DeliveryItem[]>([
-    { id: 1, name: 'Sri Amman Traders', tagline: 'Deliver before noon', boxes: 4, status: 'Delivered', amount: 3000 },
-    { id: 2, name: 'MR Chicken Shop', tagline: '', boxes: 2, status: 'Pending' },
-    { id: 3, name: 'Govind Broilers', tagline: '', boxes: 7, status: 'Pending' },
-    { id: 4, name: 'Jagan Meat House', tagline: '', boxes: 4, status: 'Pending' },
-    { id: 5, name: 'Bala Chicken', tagline: '', boxes: 3, status: 'Pending' },
-    { id: 6, name: 'Ismail Store', tagline: '', boxes: 1, status: 'Pending' }
-  ]);
+  deliveries = signal<DeliveryItem[]>([]);
 
   readonly items = this.deliveries.asReadonly();
 

@@ -1,11 +1,10 @@
 <!-- Custom Header Section -->
-<div class="dashboard-header pb-5 rounded-bottom-4 text-white position-relative"
-  style="background-color: #15803d; padding-top: 1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; margin-bottom: 2rem;">
+<div class="dashboard-header text-white position-relative">
   <!-- User Profile & Logout -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div class="d-flex align-items-center gap-3">
       <div class="rounded-circle d-flex align-items-center justify-content-center bg-white bg-opacity-25"
-        style="width: 48px; height: 48px;">
+        style="width: 48px; height: 48px; backdrop-filter: blur(4px);">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -13,13 +12,12 @@
         </svg>
       </div>
       <div>
-        <div class="text-white text-opacity-75 text-size-xs">Welcome back,</div>
-        <div class="font-weight-bold text-size-lg">{{ user()?.name || 'Employee' }}</div>
+        <div class="text-white text-opacity-75 text-size-xs text-spacing-sm">Welcome back,</div>
+        <div class="font-weight-bold text-size-xl tracking-wide">{{ user()?.name || 'Employee' }}</div>
       </div>
     </div>
-    <button
-      class="btn btn-white bg-white bg-opacity-25 rounded-circle p-2 d-flex align-items-center justify-content-center text-white border-0"
-      style="width: 40px; height: 40px;">
+    <button class="btn glass-btn rounded-circle p-2 d-flex align-items-center justify-content-center text-white"
+      style="width: 44px; height: 44px;">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -32,34 +30,34 @@
   <!-- Stats Cards Row -->
   <div class="row g-3">
     <div class="col-6">
-      <div class="bg-white bg-opacity-10 rounded-4 p-3 border border-white border-opacity-10">
-        <div class="text-white text-opacity-75 text-size-xs mb-1">Active Tasks</div>
-        <div class="text-size-2xl font-weight-bold">{{ activeTask() ? 1 : 0 }}</div>
+      <div class="stat-card">
+        <div class="text-white text-opacity-75 text-size-sm mb-1">Active Tasks</div>
+        <div class="text-size-3xl font-weight-bold">{{ activeTask() ? activeTask().length : 0 }}</div>
       </div>
     </div>
     <div class="col-6">
-      <div class="bg-white bg-opacity-10 rounded-4 p-3 border border-white border-opacity-10">
-        <div class="text-white text-opacity-75 text-size-xs mb-1">Completed</div>
-        <div class="text-size-2xl font-weight-bold">{{ history().length }}</div>
+      <div class="stat-card">
+        <div class="text-white text-opacity-75 text-size-sm mb-1">Completed</div>
+        <div class="text-size-3xl font-weight-bold">{{ history().length }}</div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="content-section px-3 pb-4">
+<div class="content-section px-3">
   <!-- Active Task Section -->
-  <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase tracking-wide">ACTIVE TASK</div>
+  <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase tracking-wide ps-1">ACTIVE TASK</div>
 
-  @if (activeTask() && activeTask().length > 0; as task) {
+  @if (activeTask() && activeTask().length > 0) {
   <div class="slider">
     @for (task of activeTask(); track $index) {
-    <div [ngStyle]="activeTask().length > 1 ? { minWidth: '90%' } : {minWidth: '100%'}"
-      class="card border border-2 shadow-sm rounded-4 p-3 mb-4 card-start" (click)="viewTask(task.tripId)"
-      style="cursor: pointer; border-color: #16a34a !important;">
-      <div class="d-flex justify-content-between align-items-start mb-3">
-        <div class="d-flex gap-3">
-          <div class="rounded-3 p-2 d-flex align-items-center justify-content-center"
-            style="width: 48px; height: 48px; background-color: #e6fcf5; color: #16a34a;">
+    <div [ngStyle]="activeTask().length > 1 ? { minWidth: '90%' } : {minWidth: '100%'}" class="task-card"
+      (click)="viewTask(task.tripId)">
+
+      <!-- Card Header -->
+      <div class="d-flex justify-content-between align-items-start mb-4">
+        <div class="d-flex gap-3 align-items-center">
+          <div class="card-icon-box">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="1" y="3" width="15" height="13"></rect>
@@ -69,55 +67,58 @@
             </svg>
           </div>
           <div>
-            <div class="font-weight-bold text-size-md text-dark">{{ task.vehicleNumber }}</div>
+            <div class="font-weight-bold text-size-lg text-dark mb-1">{{ task.vehicleNumber }}</div>
             <div class="text-muted text-size-sm">{{ task.date | date:'d MMM y' }}</div>
           </div>
         </div>
-        <span class="badge rounded-pill text-size-xs py-2 px-3 border"
-          style="background-color: #fff7ed; color: #d97706; border-color: #fed7aa; font-weight: 500;">
-          <div class="d-flex align-items-center gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            {{ task.status }}
-          </div>
-        </span>
-      </div>
 
-      <div class="d-flex gap-3 mb-3">
-        <div class="flex-fill rounded-3 p-3" style="background-color: #f3f4f6;">
-          <div class="d-flex align-items-center gap-2 text-muted text-size-xs mb-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path
-                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-              </path>
-              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-              <line x1="12" y1="22.08" x2="12" y2="12"></line>
-            </svg>
-            Deliveries
-          </div>
-          <div class="font-weight-bold text-dark text-size-lg">{{ task.totalCustomers }}</div>
-        </div>
-        <div class="flex-fill rounded-3 p-3" style="background-color: #f3f4f6;">
-          <div class="d-flex align-items-center gap-2 text-muted text-size-xs mb-1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="1" x2="12" y2="23"></line>
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-            Advance
-          </div>
-          <div class="font-weight-bold text-dark text-size-lg">{{ task.advanceAmount | currency:'INR':'symbol':'1.0-0'
-            }}</div>
+        <div class="status-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          {{ task.status }}
         </div>
       </div>
 
-      <div class="border-top pt-3">
-        <div class="d-flex justify-content-between align-items-center" style="color: #16a34a;">
-          <span class="font-weight-bold text-size-sm">View Details</span>
+      <!-- Card Info Blocks -->
+      <div class="row g-3 mb-4">
+        <div class="col-6">
+          <div class="info-box">
+            <div class="label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                </path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              Deliveries
+            </div>
+            <div class="value">{{ task.totalCustomers }}</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="info-box">
+            <div class="label">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+              Advance
+            </div>
+            <div class="value">{{ task.advanceAmount | currency:'INR':'symbol':'1.0-0' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Footer -->
+      <div class="border-top pt-3 border-light-subtle">
+        <div class="detail-link">
+          <span>View Details</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
@@ -128,9 +129,8 @@
     }
   </div>
   } @else {
-  <div
-    class="card border border-2 shadow-sm rounded-4 p-5 mb-4 d-flex flex-column align-items-center justify-content-center text-center">
-    <div class="text-muted mb-2 opacity-50">
+  <div class="empty-state-card mb-4 text-center">
+    <div class="text-muted mb-2 opacity-50 d-inline-block">
       <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 11l3 3L22 4"></path>
@@ -143,18 +143,17 @@
   }
 
   <!-- Task History -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-3 mt-2 ps-1 pe-1">
     <div class="text-muted text-size-xs font-weight-bold text-uppercase tracking-wide">TASK HISTORY</div>
-    <button class="btn btn-link p-0 text-decoration-none font-weight-medium text-size-sm" style="color: #16a34a;">View
-      All <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <button class="btn btn-link p-0 text-decoration-none font-weight-bold text-size-sm primary-text-color">View All <svg
+        xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="9 18 15 12 9 6"></polyline>
       </svg></button>
   </div>
 
   @if(history().length === 0) {
-  <div
-    class="card border-0 shadow-sm rounded-4 py-5 px-3 d-flex flex-column align-items-center justify-content-center text-center">
+  <div class="empty-state-card text-center py-5">
     <div class="text-muted mb-2">
       <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-50">
@@ -167,23 +166,22 @@
   } @else {
   <div class="d-flex flex-column gap-3">
     @for (task of history(); track task.id) {
-    <div class="card border-0 shadow-sm rounded-4 p-3 d-flex flex-row justify-content-between align-items-center">
+    <div class="history-item">
       <div class="d-flex align-items-center gap-3">
-        <div class="rounded-3 p-2 d-flex align-items-center justify-content-center bg-light text-muted"
-          style="width: 48px; height: 48px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        <div class="icon-box-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
             <polyline points="22 4 12 14.01 9 11.01"></polyline>
           </svg>
         </div>
         <div>
-          <div class="font-weight-bold text-size-md text-dark">{{ task.vehicleNumber }}</div>
-          <div class="text-muted text-size-sm">{{ task.date | date:'dd MMM y' }}</div>
+          <div class="font-weight-bold text-size-md text-dark mb-1">{{ task.vehicleNumber }}</div>
+          <div class="text-muted text-size-xs">{{ task.date | date:'dd MMM y' }}</div>
         </div>
       </div>
       <div class="text-end">
-        <div class="badge bg-success rounded-pill px-2">Completed</div>
+        <div class="badge-completed">Completed</div>
       </div>
     </div>
     }

@@ -1,12 +1,6 @@
-import { Injectable, computed, signal } from '@angular/core';
-
-export interface Expense {
-  id: number;
-  category: string;
-  title: string;
-  time: Date;
-  amount: number;
-}
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
+import { ApiResponse, Expense, tripExpense } from '../models/core.model';
 
 export interface ExpenseCategory {
   id: string;
@@ -28,11 +22,7 @@ export class ExpenseService {
   get advanceReceived() { return this.advanceAmount(); }
 
   // Initialize with some mock data matching the screenshot context if possible, or empty
-  private expenses = signal<Expense[]>([
-    // Mocking data so Trip Summary looks populated immediately
-    { id: 1, category: 'diesel', title: 'Bhart Pertrol', time: new Date(), amount: 2000 },
-    { id: 2, category: 'food', title: 'Food', time: new Date(), amount: 300 }
-  ]);
+  private expenses = signal<Expense[]>([]);
 
   readonly list = this.expenses.asReadonly();
 
@@ -59,6 +49,7 @@ export class ExpenseService {
 
   reset() {
     this.expenses.set([]);
-    this.advanceAmount.set(3000); // Reset to default or 0? Default for next trip.
+    this.advanceAmount.set(3000);
   }
+
 }

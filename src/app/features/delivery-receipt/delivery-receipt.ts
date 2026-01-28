@@ -2,7 +2,10 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DeliveryService, DeliveryItem } from '../../core/services/delivery';
+import { DeliveryService } from '../../core/services/delivery';
+import { Subject, takeUntil } from 'rxjs';
+import { DeliveryItem, DeliveryReceiptPayload } from '../../core/models/core.model';
+import { TripService } from '../../core/services/trip';
 
 @Component({
   selector: 'app-delivery-receipt',
@@ -15,6 +18,7 @@ export class DeliveryReceipt implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private deliveryService = inject(DeliveryService);
+  private tripService = inject(TripService);
 
   delivery = signal<DeliveryItem | undefined>(undefined);
 
@@ -50,6 +54,15 @@ export class DeliveryReceipt implements OnInit {
     const cash = this.form.get('cashReceived')?.value || 0;
     return this.billingAmount() - cash;
   });
+
+  /** 
+   * Subject for managing unsubscriptions and avoiding memory leaks.
+   */
+  private destroy$ = new Subject<void>();
+
+  private customerId = signal<number | null>(null);
+
+  private tripId = inject(ActivatedRoute).snapshot.params['tripId'];
 
   get entries() {
     return this.form.get('entries') as FormArray;
@@ -123,9 +136,14 @@ export class DeliveryReceipt implements OnInit {
   confirmDelivery() {
     if (this.form.valid && this.delivery()) {
       const stats = this.stats();
-      const receiptData = {
+      const receiptData: DeliveryReceiptPayload = {
+        deliveryId: this.delivery()!.id,
+        customerId: this.delivery()!.customerId,
+        tripId: +this.tripId,
         entries: this.form.value.entries as any,
-        totalBirdsWeight: stats.birdsWeight,
+        totalWeight: stats.totalLoadWt,
+        boxWeight: stats.totalEmptyWt,
+        birdsWeight: stats.birdsWeight,
         numberOfBirds: this.form.value.numberOfBirds || 0,
         ratePerKg: this.form.value.ratePerKg || 0,
         billingAmount: stats.billingAmount,
@@ -133,8 +151,23 @@ export class DeliveryReceipt implements OnInit {
         balance: stats.balance
       };
       console.log(receiptData);
+      this.tripService.deliveredCustomer(receiptData).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res) => {
+          if (res.success) {
+            this.router.navigate(['/delivery-list', this.tripId]);
+          }
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      });
       // this.deliveryService.updateDelivery(this.delivery()!.id, receiptData);
       // this.router.navigate(['/delivery-list']);
     }
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

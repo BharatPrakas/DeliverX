@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'; // Need CommonModule for date pi
 import { Router } from '@angular/router';
 import { TripService } from '../../core/services/trip';
 import { Subject, takeUntil } from 'rxjs';
-import { ApiResponse, Task } from '../../core/models/core.model';
+import { ApiResponse, CompletedTask, Task, TaskDetails } from '../../core/models/core.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../common/services/auth';
 import { CommonService } from '../../common/services/common-service';
@@ -26,28 +26,66 @@ export class Dashboard {
 
   user = this.authService.currentUser;
   // activeTask = this.tripService.activeTask;
-  activeTask = signal<Task[]>([]);
+  activeTask = signal<TaskDetails[]>([]);
   activeTasksCount = 1; // Keeping simple or derive from activeTask() ? 1 if activeTask() else 0
 
-  history = this.tripService.history;
+  history = signal<CompletedTask[]>([]);
 
-  viewTask(id: number) {
-    this.router.navigate(['/task-detail', id]);
+  loader = [true, true];
+
+  viewTask(tripId: number) {
+    const CurrentPageMap = [
+      { status: 'CREATED', page: 'task-detail' },
+      { status: 'ACCEPTED', page: 'task-detail' },
+      { status: 'STARTED', page: 'purchase' },
+      { status: 'PURCHASED', page: 'delivery-list' },
+      { status: 'DELIVERING', page: 'delivery-list' },
+      { status: 'COMPLETED', page: 'dashboard' }
+    ];
+    const taskStatus = this.activeTask().find(task => task.tripId == tripId)?.tripStatus;
+    const currentPage = 'task-detail'; // CurrentPageMap.find(page => page.status === taskStatus)?.page;
+    this.router.navigate([currentPage, tripId]);
   }
 
   ngOnInit() {
     this.commonService.showLoader();
     this.tripService.getMyWorklist().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: ApiResponse<Task[]>) => {
-        this.activeTask.set(data.data); 
+      next: (data: ApiResponse<TaskDetails[]>) => {
+        this.activeTask.set(data.data);
+        this.loader[0] = false;
+        this.stopLoader();
       },
       error: (error: HttpErrorResponse) => {
         console.log(error);
+        this.loader[0] = false;
+        this.stopLoader();
+      }
+    });
+    this.getCompletedTask();
+  }
+
+  getCompletedTask() {
+    this.tripService.getMyCompletedTask().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: ApiResponse<CompletedTask[]>) => {
+        this.history.set(data.data);
+        this.loader[1] = false;
+        this.stopLoader();
       },
-      complete: () => {
-        this.commonService.hideLoader();
+      error: (error: HttpErrorResponse) => {
+        console.log(error);
+        this.loader[1] = false;
+        this.stopLoader();
       }
     })
+  }
+
+  stopLoader() {
+    console.log(this.loader);
+    console.log(this.loader.every(loader => !loader));
+
+    if (this.loader.every(loader => !loader)) {
+      this.commonService.hideLoader();
+    }
   }
 
   ngOnDestroy() {

@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpRoutingService } from '../../common/services/http-routing';
 import { Observable } from 'rxjs';
-import { ApiResponse, TaskDetails,DeliveryItem } from '../models/core.model';
+import { ApiResponse, TaskDetails, DeliveryItem, DeliveryReceiptPayload, tripExpense, Expense, TripSummary, CompletedTask } from '../models/core.model';
 
 export interface Task {
   id: number;
@@ -53,7 +53,7 @@ export class TripService {
     this._activeTask.update(task => task ? { ...task, status: 'In Progress', startingKm: km } : null);
   }
 
-  completeTrip(endingKm: number) {
+  completeTrips(endingKm: number) {
     const current = this._activeTask();
     if (current) {
       const completedTask: Task = { ...current, status: 'Completed', endingKm };
@@ -63,8 +63,8 @@ export class TripService {
     }
   }
 
-  getMyWorklist(): Observable<ApiResponse<Task[]>> {
-    return this.http.get('v1/getMyWorklist') as Observable<ApiResponse<Task[]>>;
+  getMyWorklist(): Observable<ApiResponse<TaskDetails[]>> {
+    return this.http.get('v1/getMyWorklist') as Observable<ApiResponse<TaskDetails[]>>;
   }
 
   getTaskDetails(tripId: number): Observable<ApiResponse<TaskDetails>> {
@@ -81,5 +81,33 @@ export class TripService {
 
   getDeliveryList(tripId: number): Observable<ApiResponse<DeliveryItem[]>> {
     return this.http.post(`v1/getDeliveryList`, { tripId }) as Observable<ApiResponse<DeliveryItem[]>>;
+  }
+
+  markAsPurchased(data: { tripId: number }): Observable<ApiResponse<null>> {
+    return this.http.post(`v1/markAsPurchased`, data) as Observable<ApiResponse<null>>;
+  }
+
+  deliveredCustomer(data: DeliveryReceiptPayload): Observable<ApiResponse<null>> {
+    return this.http.post(`v1/deliveredCustomer`, data) as Observable<ApiResponse<null>>;
+  }
+
+  getTripExpenses(tripId: number): Observable<ApiResponse<tripExpense>> {
+    return this.http.post(`v1/getTripExpenses`, { tripId }) as Observable<ApiResponse<tripExpense>>;
+  }
+
+  createTripExpense(data: { tripId: number, expense: Expense }): Observable<ApiResponse<Expense>> {
+    return this.http.post(`v1/createTripExpense`, { tripId: data.tripId, ...data.expense }) as Observable<ApiResponse<Expense>>;
+  }
+
+  getTripSummary(tripId: number): Observable<ApiResponse<TripSummary>> {
+    return this.http.post(`v1/getTripSummary`, { tripId }) as Observable<ApiResponse<TripSummary>>;
+  }
+
+  completeTrip(data: { tripId: number, endingKm: number }): Observable<ApiResponse<null>> {
+    return this.http.post(`v1/completeTrip`, data) as Observable<ApiResponse<null>>;
+  }
+
+  getMyCompletedTask(): Observable<ApiResponse<CompletedTask[]>> {
+    return this.http.get(`v1/getMyCompletedTask`) as Observable<ApiResponse<CompletedTask[]>>;
   }
 }
