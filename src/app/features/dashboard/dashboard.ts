@@ -43,7 +43,7 @@ export class Dashboard {
       { status: 'COMPLETED', page: 'dashboard' }
     ];
     const taskStatus = this.activeTask().find(task => task.tripId == tripId)?.tripStatus;
-    const currentPage = 'task-detail'; // CurrentPageMap.find(page => page.status === taskStatus)?.page;
+    const currentPage = CurrentPageMap.find(page => page.status === taskStatus)?.page;
     this.router.navigate([currentPage, tripId]);
   }
 
