@@ -119,3 +119,12 @@ export interface TripDeliveries {
   cashReceived: number;
   balanceAmount: number;
 }
+
+export interface TripSupplier {
+  id: number;
+  name: string;
+  boxes: number;
+  remarks: string;
+  phone: string;
+  address: string;
+}

@@ -1,0 +1,38 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #f9fafb;
+}
+
+input:focus {
+    outline: none;
+    border-color: #0ca678 !important;
+    box-shadow: 0 0 0 2px rgba(12, 166, 120, 0.2);
+}
+
+.form-control {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.btn-confirm {
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+        background-color: #15803d;
+        color: white;
+    }
+
+    &:disabled {
+        background-color: #8adeaf;
+        color: white;
+        opacity: 0.9;
+        cursor: not-allowed;
+    }
+}

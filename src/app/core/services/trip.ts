@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpRoutingService } from '../../common/services/http-routing';
 import { Observable } from 'rxjs';
-import { ApiResponse, TaskDetails, DeliveryItem, DeliveryReceiptPayload, tripExpense, Expense, TripSummary, CompletedTask } from '../models/core.model';
+import { ApiResponse, TaskDetails, DeliveryItem, DeliveryReceiptPayload, tripExpense, Expense, TripSummary, CompletedTask, TripSupplier } from '../models/core.model';
 
 export interface Task {
   id: number;
@@ -109,5 +109,9 @@ export class TripService {
 
   getMyCompletedTask(): Observable<ApiResponse<CompletedTask[]>> {
     return this.http.get(`v1/getMyCompletedTask`) as Observable<ApiResponse<CompletedTask[]>>;
+  }
+
+  getTripSuppliers(tripId: number): Observable<ApiResponse<TripSupplier[]>> {
+    return this.http.post(`v1/getTripSuppliers`, { tripId }) as Observable<ApiResponse<TripSupplier[]>>;
   }
 }

@@ -37,5 +37,9 @@ export const routes: Routes = [
     {
         path: 'trip-summary/:tripId',
         loadComponent: () => import('./features/trip-summary/trip-summary').then(m => m.TripSummaryComponent)
+    },
+    {
+        path: 'purchase-receipt/:tripId',
+        loadComponent: () => import('./features/purchase-receipt/purchase-receipt').then(m => m.PurchaseReceipt)
     }
 ];

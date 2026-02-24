@@ -1,9 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TripService } from '../../core/services/trip';
 import { Subject, takeUntil } from 'rxjs';
-import { ApiResponse } from '../../core/models/core.model';
+import { ApiResponse, TripSupplier } from '../../core/models/core.model';
 import { CommonService } from '../../common/services/common-service';
 
 @Component({
@@ -12,7 +12,7 @@ import { CommonService } from '../../common/services/common-service';
   templateUrl: './purchase.html',
   styleUrl: './purchase.scss',
 })
-export class Purchase {
+export class Purchase implements OnInit, OnDestroy {
   private tripId = inject(ActivatedRoute).snapshot.params['tripId'];
   private router = inject(Router);
   private tripService = inject(TripService);
@@ -21,33 +21,38 @@ export class Purchase {
    * Subject for managing unsubscriptions and avoiding memory leaks.
    */
   private destroy$ = new Subject<void>();
-  purchaseData = {
-    supplier: {
-      name: 'Sree Broilers',
-      address: 'Jallikattuvalavu, Salem',
-      location: 'Jallikattuvalavu, Salem',
-      phone: '99940 41431'
-    },
-    summary: {
-      totalBoxes: 21,
-      totalCustomers: 6
-    },
-    customers: [
-      { id: 1, name: 'Sri Amman Traders', boxes: 4 },
-      { id: 2, name: 'MR Chicken Shop', boxes: 2 },
-      { id: 3, name: 'Govind Broilers', boxes: 7 },
-      { id: 4, name: 'Jagan Meat House', boxes: 4 },
-      { id: 5, name: 'Bala Chicken', boxes: 3 },
-      { id: 6, name: 'Ismail Store', boxes: 1 }
-    ]
-  };
+  
+  suppliers: TripSupplier[] = [];
+  totalBoxes = 0;
+  totalSuppliers = 0;
+  completedSuppliers = 0;
 
   ngOnInit() {
-    console.log(this.tripId);
+    this.commonService.showLoader();
+    this.tripService.getTripSuppliers(Number(this.tripId)).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: ApiResponse<TripSupplier[]>) => {
+        if (res.success && res.data) {
+          this.suppliers = res.data;
+          this.totalSuppliers = this.suppliers.length;
+          this.totalBoxes = this.suppliers.reduce((sum, supplier) => sum + (supplier.boxes || 0), 0);
+          this.completedSuppliers = 0;
+        }
+      },
+      error: (error) => {
+        console.log(error);
+      },
+      complete: () => {
+        this.commonService.hideLoader();
+      }
+    });
   }
 
   goBack() {
     window.history.back();
+  }
+
+  goToReceipt(supplierId: number) {
+    this.router.navigate(['/purchase-receipt', this.tripId], { queryParams: { supplierId } });
   }
 
   markAsPurchased() {

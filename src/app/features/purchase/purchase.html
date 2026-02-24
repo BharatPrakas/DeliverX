@@ -2,15 +2,15 @@
 <div class="header-section sticky-top bg-white px-3 py-3 border-bottom">
   <div class="d-flex align-items-center gap-3">
     <button class="btn btn-light rounded-circle p-2 d-flex align-items-center justify-content-center" (click)="goBack()"
-      style="width: 40px; height: 40px;">
+      style="width: 40px; height: 40px; background-color: #f3f4f6; border: none;">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        stroke="#4b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M15 18l-6-6 6-6" />
       </svg>
     </button>
     <div>
-      <h5 class="m-0 text-size-lg font-weight-bold">Purchase</h5>
-      <div class="text-muted text-size-sm">Supplier pickup</div>
+      <h5 class="m-0 text-dark font-weight-bold" style="font-size: 1.1rem;">Purchase</h5>
+      <div class="text-muted" style="font-size: 0.85rem;">{{ completedSuppliers }}/{{ totalSuppliers }} suppliers completed</div>
     </div>
   </div>
 </div>
@@ -18,99 +18,82 @@
 <!-- Scrollable Content -->
 <div class="content-section p-3 d-flex flex-column gap-3" style="padding-bottom: 90px !important;">
 
-  <!-- Supplier Card -->
-  <div class="card border-0 shadow-sm rounded-4 overflow-hidden border border-2"
-    style="border-color: #16a34a !important;">
-    <div class="p-3">
-      <div class="d-flex gap-3 align-items-center mb-4">
-        <div class="icon-box rounded-circle d-flex align-items-center justify-content-center p-3"
-          style="background-color: #e6fcf5; color: #0ca678; width: 48px; height: 48px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
-        </div>
-        <div>
-          <div class="font-weight-bold text-dark text-size-md">{{ purchaseData.supplier.name }}</div>
-          <div class="text-muted text-size-sm">{{ purchaseData.supplier.address }}</div>
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
-        <div class="d-flex align-items-center gap-3 text-muted">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            style="color: #16a34a;">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
-          <span class="text-size-sm">Location</span>
-        </div>
-        <div class="font-weight-bold text-dark text-size-sm text-end">{{ purchaseData.supplier.location }}</div>
-      </div>
-
-      <div class="d-flex justify-content-between align-items-center py-3">
-        <div class="d-flex align-items-center gap-3 text-muted">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            style="color: #16a34a;">
-            <path
-              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-            </path>
-          </svg>
-          <span class="text-size-sm">Contact</span>
-        </div>
-        <div class="font-weight-bold text-size-sm" style="color: #16a34a;">{{ purchaseData.supplier.phone }}</div>
-      </div>
+  <!-- Summary Card -->
+  <div class="card shadow-sm rounded-4 p-3" style="border: 2px solid #0ca678; background-color: white;">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <div class="text-muted" style="font-size: 0.85rem;">Total Boxes to Pick</div>
+      <div class="text-muted" style="font-size: 0.85rem;">Suppliers</div>
     </div>
-  </div>
-
-  <!-- Order Summary -->
-  <div class="card border-0 shadow-sm rounded-4 p-4">
-    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">ORDER SUMMARY</div>
     <div class="d-flex justify-content-between align-items-center">
+      <div class="font-weight-bold" style="font-size: 1.5rem; color: #1f2937;">{{ totalBoxes }}</div>
+      <div class="font-weight-bold" style="font-size: 1.5rem; color: #0ca678;">{{ totalSuppliers }}</div>
+    </div>
+  </div>
+
+  <!-- Supplier Cards -->
+  @for (supplier of suppliers; track supplier.id) {
+  <div class="card border-0 shadow-sm rounded-4 p-3 mb-2" style="background-color: white; cursor: pointer;" (click)="goToReceipt(supplier.id)">
+    <div class="d-flex justify-content-between align-items-start mb-3">
       <div class="d-flex align-items-center gap-3">
-        <div class="icon-box rounded-3 d-flex align-items-center justify-content-center p-3"
-          style="background-color: #fff4e6; color: #fd7e14; width: 48px; height: 48px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-            </path>
-            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        <div class="icon-box rounded-circle d-flex align-items-center justify-content-center"
+          style="background-color: #eaf8f4; color: #0ca678; width: 44px; height: 44px; min-width: 44px;">
+          <!-- SVG Bird Icon like the UI -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 7h.01"></path>
+            <path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"></path>
+            <path d="m20 7 2 .5-2 .5"></path>
+            <path d="M10 18v3"></path>
+            <path d="M14 17.75V21"></path>
+            <path d="M7 18a6 6 0 0 0 3.84-10.61"></path>
           </svg>
         </div>
         <div>
-          <div class="text-muted text-size-xs">Total Boxes to Pick</div>
-          <div class="font-weight-bold text-dark text-size-2xl">{{ purchaseData.summary.totalBoxes }}</div>
+          <div class="font-weight-bold" style="font-size: 1rem; color: #1f2937; margin-bottom: 2px;">{{ supplier.name }}</div>
+          <div class="d-flex align-items-center text-muted" style="font-size: 0.8rem; gap: 4px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            {{ supplier.address }}
+          </div>
         </div>
       </div>
-      <div class="text-end">
-        <div class="text-muted text-size-xs">Customers</div>
-        <div class="font-weight-bold text-size-xl" style="color: #0ca678;">{{ purchaseData.summary.totalCustomers }}
-        </div>
+      <!-- Status Badge -->
+      <div class="badge rounded-pill d-flex align-items-center gap-1" style="background-color: #fef3c7; color: #d97706; padding: 6px 12px; font-weight: 500;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>Pending</span>
       </div>
     </div>
-  </div>
-
-  <!-- Customer Breakdown -->
-  <div class="card border-0 shadow-sm rounded-4 p-4">
-    <div class="text-muted text-size-xs font-weight-bold mb-3 text-uppercase">CUSTOMER BREAKDOWN</div>
-
-    @for (customer of purchaseData.customers; track customer.id) {
-    <div class="d-flex justify-content-between align-items-center py-3 border-bottom border-light">
-      <div class="d-flex align-items-center gap-3">
-        <span class="badge rounded-circle d-flex align-items-center justify-content-center text-dark"
-          style="width: 24px; height: 24px; background-color: #f3f4f6;">{{ customer.id }}</span>
-        <span class="text-dark text-size-sm font-weight-bold">{{ customer.name }}</span>
+    
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center text-muted gap-2" style="font-size: 0.85rem;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+        <span>{{ supplier.boxes || 0 }} boxes</span>
       </div>
-      <div class="font-weight-bold text-size-sm" style="color: #16a34a;">{{ customer.boxes }} boxes</div>
+      @if (supplier.phone) {
+      <div class="d-flex align-items-center gap-2 font-weight-bold" style="font-size: 0.85rem; color: #0ca678;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+        </svg>
+        <span>{{ supplier.phone }}</span>
+      </div>
+      }
     </div>
-    }
   </div>
+  }
 
+  @if (suppliers.length === 0) {
+  <div class="text-center text-muted p-4">
+    No suppliers found for this trip.
+  </div>
+  }
 </div>
 
 <!-- Footer Action -->
