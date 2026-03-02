@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TripService } from '../../core/services/trip';
@@ -22,20 +22,23 @@ export class Purchase implements OnInit, OnDestroy {
    */
   private destroy$ = new Subject<void>();
   
-  suppliers: TripSupplier[] = [];
+  suppliers = signal<TripSupplier[]>([]);
   totalBoxes = 0;
   totalSuppliers = 0;
   completedSuppliers = 0;
+
+  /** True when at least one supplier has been purchased — enough to start delivering. */
+  anySuppliersCompleted = computed(() => this.suppliers().some(s => s.isDelivered));
 
   ngOnInit() {
     this.commonService.showLoader();
     this.tripService.getTripSuppliers(Number(this.tripId)).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: ApiResponse<TripSupplier[]>) => {
         if (res.success && res.data) {
-          this.suppliers = res.data;
-          this.totalSuppliers = this.suppliers.length;
-          this.totalBoxes = this.suppliers.reduce((sum, supplier) => sum + (supplier.boxes || 0), 0);
-          this.completedSuppliers = 0;
+          this.suppliers.set(res.data);
+          this.totalSuppliers = this.suppliers().length;
+          this.totalBoxes = this.suppliers().reduce((sum, supplier) => sum + (supplier.boxes || 0), 0);
+          this.completedSuppliers = this.suppliers().filter(s => s.isDelivered).length;
         }
       },
       error: (error) => {
@@ -51,23 +54,15 @@ export class Purchase implements OnInit, OnDestroy {
     window.history.back();
   }
 
-  goToReceipt(supplierId: number) {
-    this.router.navigate(['/purchase-receipt', this.tripId], { queryParams: { supplierId } });
+  goToReceipt(supplier: TripSupplier) {
+    this.router.navigate(['/purchase-receipt', this.tripId], {state: { supplier }});
   }
 
-  markAsPurchased() {
-    this.commonService.showLoader();
-    this.tripService.markAsPurchased({ tripId: Number(this.tripId) }).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: ApiResponse<null>) => {
-        this.router.navigate(['/delivery-list', this.tripId]);
-      },
-      error: (error) => {
-        console.log(error);
-      },
-      complete: () => {
-        this.commonService.hideLoader();
-      }
-    });
+  navigateToDeliveryList() {
+    if (!this.anySuppliersCompleted()) {
+      return;
+    }
+    this.router.navigate(['/delivery-list', this.tripId]);
   }
 
   ngOnDestroy() {

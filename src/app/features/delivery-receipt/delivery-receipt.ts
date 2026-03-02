@@ -25,7 +25,7 @@ export class DeliveryReceipt implements OnInit {
   form = this.fb.group({
     entries: this.fb.array([]),
     numberOfBirds: [0],
-    ratePerKg: [0, Validators.required],
+    ratePerKg: [null],
     cashReceived: [0]
   });
 
@@ -105,12 +105,13 @@ export class DeliveryReceipt implements OnInit {
     const tLoad = entriesVal.reduce((s, c) => s + (Number(c.loadWt) || 0), 0);
     const tEmpty = entriesVal.reduce((s, c) => s + (Number(c.emptyWt) || 0), 0);
     const bWeight = tLoad - tEmpty;
-    const rate = this.form.get('ratePerKg')?.value || 0;
-    const billAmt = bWeight * rate;
-    const cash = this.form.get('cashReceived')?.value || 0;
-    const bal = billAmt - cash;
+    // const rate = this.form.get('ratePerKg')?.value || 0;
+    // const billAmt = bWeight * rate;
+    // const cash = this.form.get('cashReceived')?.value || 0;
+    // const bal = billAmt - cash;
 
-    return { totalCages: tCages, totalLoadWt: tLoad, totalEmptyWt: tEmpty, birdsWeight: bWeight, billingAmount: billAmt, balance: bal };
+    // return { totalCages: tCages, totalLoadWt: tLoad, totalEmptyWt: tEmpty, birdsWeight: bWeight, billingAmount: billAmt, balance: bal };
+    return { totalCages: tCages, totalLoadWt: tLoad, totalEmptyWt: tEmpty, birdsWeight: bWeight };
   });
 
 
@@ -134,6 +135,8 @@ export class DeliveryReceipt implements OnInit {
   }
 
   confirmDelivery() {
+    console.log('form', this.form.valid);
+    console.log('delivery', this.delivery());
     if (this.form.valid && this.delivery()) {
       const stats = this.stats();
       const receiptData: DeliveryReceiptPayload = {
@@ -146,9 +149,9 @@ export class DeliveryReceipt implements OnInit {
         birdsWeight: stats.birdsWeight,
         numberOfBirds: this.form.value.numberOfBirds || 0,
         ratePerKg: this.form.value.ratePerKg || 0,
-        billingAmount: stats.billingAmount,
+        // billingAmount: stats.billingAmount,
         cashReceived: this.form.value.cashReceived || 0,
-        balance: stats.balance
+        // balance: stats.balance
       };
       console.log(receiptData);
       this.tripService.deliveredCustomer(receiptData).pipe(takeUntil(this.destroy$)).subscribe({

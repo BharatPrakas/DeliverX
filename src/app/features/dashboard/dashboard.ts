@@ -15,7 +15,7 @@ import { CommonService } from '../../common/services/common-service';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard {
-  private router = inject(Router);
+  protected router = inject(Router);
   private tripService = inject(TripService);
   private authService = inject(AuthService);
   private commonService = inject(CommonService);

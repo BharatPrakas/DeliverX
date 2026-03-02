@@ -148,6 +148,43 @@
     justify-content: space-between;
 }
 
+.quick-nav-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.quick-nav-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    white-space: nowrap;
+    border: none;
+
+    &:active {
+        opacity: 0.8;
+        transform: scale(0.97);
+    }
+
+    &--outline {
+        background-color: #f0fdf4;
+        color: var(--primary-color);
+        border: 1px solid #bbf7d0;
+    }
+
+    &--primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+}
+
 /* Non-Active State */
 .empty-state-card {
     border-radius: 1.5rem;

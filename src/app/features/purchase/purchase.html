@@ -31,8 +31,8 @@
   </div>
 
   <!-- Supplier Cards -->
-  @for (supplier of suppliers; track supplier.id) {
-  <div class="card border-0 shadow-sm rounded-4 p-3 mb-2" style="background-color: white; cursor: pointer;" (click)="goToReceipt(supplier.id)">
+  @for (supplier of suppliers(); track supplier.id) {
+  <div class="card border-0 shadow-sm rounded-4 p-3 mb-2" style="background-color: white; cursor: pointer;" (click)="goToReceipt(supplier)">
     <div class="d-flex justify-content-between align-items-start mb-3">
       <div class="d-flex align-items-center gap-3">
         <div class="icon-box rounded-circle d-flex align-items-center justify-content-center"
@@ -59,13 +59,23 @@
         </div>
       </div>
       <!-- Status Badge -->
-      <div class="badge rounded-pill d-flex align-items-center gap-1" style="background-color: #fef3c7; color: #d97706; padding: 6px 12px; font-weight: 500;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
-        <span>Pending</span>
-      </div>
+      @if (supplier.isDelivered) {
+        <div class="badge rounded-pill d-flex align-items-center gap-1" style="background-color: #dcfce7; color: #16a34a; padding: 6px 12px; font-weight: 500;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+          <span>Completed</span>
+        </div>
+      } @else {
+        <div class="badge rounded-pill d-flex align-items-center gap-1" style="background-color: #fef3c7; color: #d97706; padding: 6px 12px; font-weight: 500;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Pending</span>
+        </div>
+      }
     </div>
     
     <div class="d-flex justify-content-between align-items-center">
@@ -89,7 +99,7 @@
   </div>
   }
 
-  @if (suppliers.length === 0) {
+  @if (suppliers().length === 0) {
   <div class="text-center text-muted p-4">
     No suppliers found for this trip.
   </div>
@@ -99,12 +109,25 @@
 <!-- Footer Action -->
 <div class="footer-section fixed-bottom bg-white border-top p-3" style="z-index: 1000;">
   <button
-    class="btn btn-primary w-100 rounded-4 py-3 font-weight-bold text-size-md d-flex align-items-center justify-content-center gap-2"
-    style="background-color: #16a34a; border: none; color: white;" (click)="markAsPurchased()">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="20 6 9 17 4 12"></polyline>
-    </svg>
-    Mark as Purchased
+    class="btn w-100 rounded-4 py-3 font-weight-bold text-size-md d-flex align-items-center justify-content-center gap-2"
+    [style.background-color]="anySuppliersCompleted() ? '#16a34a' : '#e5e7eb'"
+    [style.color]="anySuppliersCompleted() ? 'white' : '#9ca3af'"
+    [style.border]="'none'"
+    [disabled]="!anySuppliersCompleted()"
+    (click)="navigateToDeliveryList()">
+    @if (anySuppliersCompleted()) {
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      Start Delivery
+    } @else {
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      Purchase at least one supplier to continue
+    }
   </button>
 </div>

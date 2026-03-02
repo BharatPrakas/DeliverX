@@ -34,17 +34,21 @@ export class PurchaseReceipt implements OnInit {
   };
 
   receiptForm: FormGroup = this.fb.group({
-    totalWeight: ['1', Validators.required],
-    numberOfBirds: ['1', Validators.required]
+    totalWeight: [null, Validators.required],
+    numberOfBirds: [null, Validators.required]
   });
 
   ngOnInit() {
     this.tripId = this.route.snapshot.params['tripId'];
-    this.supplierId = this.route.snapshot.queryParams['supplierId'];
-    
-    // We could either fetch individual supplier or just fallback to static data if not found.
-    // For demo/design purposes based on prompt we can provide mock data or try fetching from list
-    this.fetchSupplierData();
+    // Read the supplier passed via navigation state
+    const navState = this.router.getCurrentNavigation()?.extras.state
+                  ?? history.state; // fallback on hard refresh
+    this.supplier = navState?.['supplier'] ?? null;
+    // Only fetch if state is missing (e.g., user navigated directly via URL)
+    if (!this.supplier) {
+      this.supplierId = this.route.snapshot.queryParams['supplierId'];
+      this.fetchSupplierData();
+    }
   }
 
   fetchSupplierData() {
@@ -94,9 +98,24 @@ export class PurchaseReceipt implements OnInit {
 
   confirmPurchase() {
     if (this.receiptForm.valid) {
-      console.log('Purchase confirmed', this.receiptForm.value);
-      // Assume successful and navigate back
-      this.goBack();
+      this.commonService.showLoader();
+      this.tripService.createPurchaseOrder({
+        tripId: Number(this.tripId),
+        supplierId: Number(this.supplier.supplierId),
+        totalWeight: Number(this.receiptForm.value.totalWeight),
+        numberOfBirds: Number(this.receiptForm.value.numberOfBirds)
+      }).subscribe({
+        next: (res: ApiResponse<null>) => {
+          if (res.success) {
+            this.commonService.hideLoader();
+            this.goBack();
+          }
+        },
+        error: (error) => {
+          this.commonService.hideLoader();
+          console.log(error);
+        }
+      });
     }
   }
 

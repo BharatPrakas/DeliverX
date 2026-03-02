@@ -74,9 +74,9 @@ export interface DeliveryReceiptPayload {
   birdsWeight: number;
   numberOfBirds: number;
   ratePerKg: number;
-  billingAmount: number;
+  billingAmount?: number;
   cashReceived: number;
-  balance: number;
+  balance?: number;
 }
 
 interface entries {
@@ -126,5 +126,7 @@ export interface TripSupplier {
   boxes: number;
   remarks: string;
   phone: string;
+  isDelivered: boolean;
+  supplierId: number;
   address: string;
 }

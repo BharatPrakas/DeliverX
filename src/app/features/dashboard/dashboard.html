@@ -117,14 +117,42 @@
 
       <!-- Card Footer -->
       <div class="border-top pt-3 border-light-subtle">
-        <div class="detail-link">
-          <span>View Details</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </div>
+        @if (['STARTED', 'PURCHASED', 'DELIVERING'].includes(task.tripStatus)) {
+          <div class="quick-nav-row">
+            <button class="quick-nav-btn quick-nav-btn--outline" (click)="$event.stopPropagation(); router.navigate(['/purchase', task.tripId])">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 7h.01"></path>
+                <path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"></path>
+                <path d="m20 7 2 .5-2 .5"></path>
+                <path d="M10 18v3"></path>
+                <path d="M14 17.75V21"></path>
+                <path d="M7 18a6 6 0 0 0 3.84-10.61"></path>
+              </svg>
+              Suppliers
+            </button>
+            <button class="quick-nav-btn quick-nav-btn--primary" (click)="$event.stopPropagation(); router.navigate(['/delivery-list', task.tripId])">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+              Delivery List
+            </button>
+          </div>
+        } @else {
+          <div class="detail-link">
+            <span>View Details</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        }
       </div>
+
     </div>
     }
   </div>

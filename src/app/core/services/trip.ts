@@ -114,4 +114,8 @@ export class TripService {
   getTripSuppliers(tripId: number): Observable<ApiResponse<TripSupplier[]>> {
     return this.http.post(`v1/getTripSuppliers`, { tripId }) as Observable<ApiResponse<TripSupplier[]>>;
   }
+
+  createPurchaseOrder(data: { tripId: number, supplierId: number, totalWeight: number, numberOfBirds: number }): Observable<ApiResponse<null>> {
+    return this.http.post(`v1/createPurchaseOrder`, data) as Observable<ApiResponse<null>>;
+  }
 }
