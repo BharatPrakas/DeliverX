@@ -80,12 +80,13 @@ export class Dashboard {
   }
 
   stopLoader() {
-    console.log(this.loader);
-    console.log(this.loader.every(loader => !loader));
-
     if (this.loader.every(loader => !loader)) {
       this.commonService.hideLoader();
     }
+  }
+
+  logout() {
+    this.authService.clearToken();
   }
 
   ngOnDestroy() {
